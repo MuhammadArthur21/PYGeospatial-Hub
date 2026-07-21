@@ -1,0 +1,173 @@
+import { Link } from 'react-router-dom'
+import {
+  BookOpen, PlayCircle, Wrench, Server, Shield, Users,
+  ArrowRight, ChevronRight, Star, Code2, Map, Globe
+} from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
+
+const features = [
+  {
+    icon: BookOpen,
+    title: 'Library Index',
+    description: '100+ Python geospatial libraries organized, documented & ready to use',
+    path: '/libraries',
+    color: 'from-primary-500 to-emerald-500',
+  },
+  {
+    icon: PlayCircle,
+    title: 'Interactive Sandbox',
+    description: 'Write & execute Python geo code instantly in your browser — zero install',
+    path: '/sandbox',
+    color: 'from-ocean-500 to-blue-500',
+  },
+  {
+    icon: Wrench,
+    title: 'Tools Marketplace',
+    description: 'Pre-built geospatial tools: buffer, clip, geocode, spatial join & more',
+    path: '/tools',
+    color: 'from-purple-500 to-pink-500',
+  },
+  {
+    icon: Map,
+    title: 'Visualization Engine',
+    description: 'Auto-render results to interactive maps & charts with one click',
+    path: '/sandbox',
+    color: 'from-amber-500 to-orange-500',
+  },
+]
+
+const stats = [
+  { label: 'Geo Libraries', value: '100+' },
+  { label: 'Pre-built Tools', value: '50+' },
+  { label: 'Community Scripts', value: '500+' },
+  { label: 'Active Users', value: '5,000+' },
+]
+
+export default function Home() {
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-500/10 via-transparent to-surface-950 pointer-events-none" />
+        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-40 right-1/4 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full text-sm text-primary-400 mb-8 animate-fade-in">
+              <Star size={14} className="fill-primary-400" />
+              Your Complete Geospatial Python Ecosystem
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 animate-slide-up">
+              <span className="gradient-text">Geospatial Python</span>
+              <br />
+              <span className="text-white">Zero Install. Full Power.</span>
+            </h1>
+
+            <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 animate-fade-in leading-relaxed">
+              One platform to explore, learn, and execute{' '}
+              <span className="text-primary-400 font-semibold">100+ geospatial libraries</span>.
+              No setup. No configuration. Just pure geospatial analysis from your browser.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up">
+              <Link to="/sandbox" className="btn-primary text-lg px-8 py-3 flex items-center gap-2">
+                <PlayCircle size={20} />
+                Try Sandbox Now
+                <ArrowRight size={16} />
+              </Link>
+              <Link to="/libraries" className="btn-secondary text-lg px-8 py-3 flex items-center gap-2">
+                <BookOpen size={20} />
+                Browse Libraries
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="stat-card items-center text-center">
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-white mb-3">
+            Everything Geospatial,{' '}
+            <span className="gradient-text">One Platform</span>
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            From browsing libraries to executing complex spatial analysis — all in your browser.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map((feature) => {
+            const Icon = feature.icon
+            return (
+              <Link key={feature.title} to={feature.path}>
+                <Card hover className="h-full group">
+                  <CardHeader>
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${feature.color} 
+                                   flex items-center justify-center shadow-lg`}>
+                      <Icon size={20} className="text-white" />
+                    </div>
+                    <CardTitle>{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardDescription>{feature.description}</CardDescription>
+                  <div className="mt-4 flex items-center gap-1 text-primary-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                    Explore
+                    <ChevronRight size={14} />
+                  </div>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-ocean-500/10" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to Explore Geospatial Python?
+          </h2>
+          <p className="text-gray-400 max-w-lg mx-auto mb-8">
+            Jump into the sandbox and start analyzing spatial data — no sign-up required.
+          </p>
+          <Link to="/sandbox" className="btn-primary text-lg px-8 py-3 inline-flex items-center gap-2">
+            <Code2 size={20} />
+            Start Coding Now
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-surface-800 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-gray-500">
+              © 2026 PyGeospatial Hub — Open Geospatial Platform
+            </span>
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <a href="#" className="hover:text-gray-300 transition-colors">Documentation</a>
+              <a href="#" className="hover:text-gray-300 transition-colors">API</a>
+              <a href="#" className="hover:text-gray-300 transition-colors">GitHub</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}

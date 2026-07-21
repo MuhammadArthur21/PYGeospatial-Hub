@@ -1,0 +1,146 @@
+{
+  "categories": [
+    {
+      "id": "core_geospatial",
+      "name": "Core Geospatial",
+      "icon": "📍",
+      "description": "Fundamental geospatial data handling libraries",
+      "libraries": [
+        {
+          "id": "shapely",
+          "name": "Shapely",
+          "version": "2.1.0",
+          "description": "Geometric operations on planar features",
+          "docs": "https://shapely.readthedocs.io/",
+          "pypi": "https://pypi.org/project/Shapely/",
+          "tags": ["geometry", "vector"],
+          "difficulty": "beginner",
+          "use_cases": ["Buffer geometry", "Intersect shapes", "Simplify polygons"]
+        },
+        {
+          "id": "fiona",
+          "name": "Fiona",
+          "version": "1.9.6",
+          "description": "Read and write vector spatial file formats",
+          "docs": "https://fiona.readthedocs.io/",
+          "pypi": "https://pypi.org/project/fiona/",
+          "tags": ["io", "vector", "shapefile", "geojson"],
+          "difficulty": "intermediate",
+          "use_cases": ["Read shapefile", "Write GeoJSON", "Format conversion"]
+        },
+        {
+          "id": "rasterio",
+          "name": "Rasterio",
+          "version": "1.4.1",
+          "description": "Professional raster data I/O library built on GDAL",
+          "docs": "https://rasterio.readthedocs.io/",
+          "pypi": "https://pypi.org/project/rasterio/",
+          "tags": ["raster", "io", "satellite", "tiff"],
+          "difficulty": "intermediate",
+          "use_cases": ["Read satellite imagery", "Clip raster", "Reproject raster"]
+        },
+        {
+          "id": "geopandas",
+          "name": "GeoPandas",
+          "version": "1.0.1",
+          "description": "Extends pandas to support geospatial data operations",
+          "docs": "https://geopandas.readthedocs.io/",
+          "pypi": "https://pypi.org/project/geopandas/",
+          "tags": ["dataframe", "vector", "analysis"],
+          "difficulty": "intermediate",
+          "use_cases": ["Spatial join", "Choropleth maps", "Data aggregation"]
+        },
+        {
+          "id": "gdal",
+          "name": "GDAL",
+          "version": "3.8.2",
+          "description": "Geospatial Data Abstraction Library for raster and vector processing",
+          "docs": "https://gdal.org/",
+          "pypi": "https://pypi.org/project/GDAL/",
+          "tags": ["raster", "vector", "format-conversion"],
+          "difficulty": "advanced",
+          "use_cases": ["Format conversion", "Raster warping", "Data extraction"]
+        },
+        {
+          "id": "pyproj",
+          "name": "Pyproj",
+          "version": "3.6.1",
+          "description": "Cartographic transformations and coordinate system operations",
+          "docs": "https://pyproj.readthedocs.io/",
+          "pypi": "https://pypi.org/project/pyproj/",
+          "tags": ["crs", "projection", "transformation"],
+          "difficulty": "beginner",
+          "use_cases": ["Reproject coordinates", "CRS transformation", "Geodesic distance"]
+        }
+      ]
+    },
+    {
+      "id": "remote_sensing",
+      "name": "Remote Sensing & Raster",
+      "icon": "🛰️",
+      "description": "Satellite imagery and raster data processing",
+      "libraries": []
+    },
+    {
+      "id": "web_mapping",
+      "name": "Web Mapping & Visualization",
+      "icon": "🗺️",
+      "description": "Interactive maps and web-based visualization",
+      "libraries": [
+        {
+          "id": "folium",
+          "name": "Folium",
+          "version": "0.18.0",
+          "description": "Create interactive Leaflet maps from Python data",
+          "docs": "https://python-visualization.github.io/folium/",
+          "pypi": "https://pypi.org/project/folium/",
+          "tags": ["map", "leaflet", "interactive"],
+          "difficulty": "beginner",
+          "use_cases": ["Create interactive maps", "Plot GeoJSON data", "Add map layers"]
+        }
+      ]
+    },
+    {
+      "id": "spatial_analysis",
+      "name": "Spatial Analysis",
+      "icon": "📐",
+      "description": "Statistical and network spatial analysis",
+      "libraries": []
+    },
+    {
+      "id": "point_cloud_lidar",
+      "name": "Point Cloud & LiDAR",
+      "icon": "☁️",
+      "description": "3D point cloud data processing",
+      "libraries": []
+    },
+    {
+      "id": "geocoding_routing",
+      "name": "Geocoding & Routing",
+      "icon": "📍",
+      "description": "Address geocoding and route optimization",
+      "libraries": []
+    },
+    {
+      "id": "visualization",
+      "name": "Visualization",
+      "icon": "📊",
+      "description": "Geospatial data visualization tools",
+      "libraries": []
+    },
+    {
+      "id": "databases",
+      "name": "Databases",
+      "icon": "🗄️",
+      "description": "Spatial database connectivity and ORM",
+      "libraries": []
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities",
+      "icon": "🔧",
+      "description": "Geospatial utility libraries",
+      "libraries": []
+    }
+  ]
+}
