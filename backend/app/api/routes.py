@@ -9,6 +9,8 @@ from app.api.v1.sandbox import router as sandbox_router
 from app.api.v1.uploads import router as uploads_router
 from app.api.v1.visualizations import router as visualizations_router
 from app.api.v1.scripts import router as scripts_router
+from app.api.v1.dashboard import router as dashboard_router
+from app.api.v1.users import router as users_router
 
 api_router = APIRouter()
 
@@ -23,3 +25,5 @@ api_router.include_router(sandbox_router, prefix="/sandbox", tags=["Sandbox"])
 api_router.include_router(uploads_router, prefix="/uploads", tags=["Uploads"])
 api_router.include_router(visualizations_router, prefix="/visualizations", tags=["Visualizations"])
 api_router.include_router(scripts_router, prefix="/scripts", tags=["Scripts"])
+api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
+api_router.include_router(users_router, prefix="/users", tags=["Users"])
