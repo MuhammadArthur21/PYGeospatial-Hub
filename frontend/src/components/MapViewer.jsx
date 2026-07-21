@@ -46,21 +46,23 @@ export default function MapViewer({ geojsonData, height = '400px', center = [-6.
       layer.bindPopup(props)
     }
 
-    if (feature.geometry?.type === 'Polygon' || feature.geometry?.type === 'MultiPolygon') {
-      layer.setStyle({
-        fillColor: is3DMode ? '#10B981' : '#546B41',
-        fillOpacity: 0.3,
-        color: is3DMode ? '#059669' : '#394A2B',
-        weight: 2.5,
-      })
-    } else if (feature.geometry?.type === 'Point') {
-      layer.setStyle({
-        radius: 7,
-        fillColor: '#3B82F6',
-        fillOpacity: 0.85,
-        color: '#1D4ED8',
-        weight: 2,
-      })
+    if (typeof layer.setStyle === 'function') {
+      if (feature.geometry?.type === 'Polygon' || feature.geometry?.type === 'MultiPolygon') {
+        layer.setStyle({
+          fillColor: is3DMode ? '#10B981' : '#546B41',
+          fillOpacity: 0.3,
+          color: is3DMode ? '#059669' : '#394A2B',
+          weight: 2.5,
+        })
+      } else if (feature.geometry?.type === 'Point') {
+        layer.setStyle({
+          radius: 7,
+          fillColor: '#3B82F6',
+          fillOpacity: 0.85,
+          color: '#1D4ED8',
+          weight: 2,
+        })
+      }
     }
   }
 
