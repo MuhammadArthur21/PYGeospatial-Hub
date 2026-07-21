@@ -90,7 +90,18 @@ export default function LibrariesIndex() {
                 <BookOpen size={16} />
                 All Libraries
               </button>
-              {STATIC_CATS.map((cat) => (
+              {[
+  { id: 'core_geospatial', name: 'Core Geospatial', icon: '📍' },
+  { id: 'remote_sensing', name: 'Remote Sensing', icon: '🛰️' },
+  { id: 'web_mapping', name: 'Web Mapping', icon: '🗺️' },
+  { id: 'spatial_analysis', name: 'Spatial Analysis', icon: '📐' },
+  { id: 'visualization', name: 'Visualization', icon: '📊' },
+  { id: 'geocoding_routing', name: 'Geocoding & Routing', icon: '📍' },
+  { id: 'databases', name: 'Databases', icon: '🗄️' },
+  { id: 'point_cloud_lidar', name: 'Point Cloud & LiDAR', icon: '☁️' },
+  { id: 'machine_learning', name: 'Machine Learning', icon: '🤖' },
+  { id: 'utilities', name: 'Utilities', icon: '🔧' },
+].map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
