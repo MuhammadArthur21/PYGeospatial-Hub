@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'pygeospatial-backend'
+    static_configs:
+      - targets: ['backend:8000']
+    metrics_path: '/metrics'
+
+  - job_name: 'pygeospatial-redis'
+    static_configs:
+      - targets: ['redis:6379']
+
+  - job_name: 'pygeospatial-postgres'
+    static_configs:
+      - targets: ['db:9187']

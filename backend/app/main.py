@@ -22,6 +22,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Rate limiting middleware
+from app.middleware.rate_limiter import rate_limit_middleware
+app.middleware("http")(rate_limit_middleware)
+
+# Global error handler
+from app.middleware.error_middleware import global_error_handler
+app.add_exception_handler(Exception, global_error_handler)
+
 # Include API router
 app.include_router(api_router, prefix="/api/v1")
 
