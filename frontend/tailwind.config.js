@@ -65,6 +65,16 @@ export default {
           900: '#6E5F42',
           950: '#514532',
         },
+        // Dark mode specific
+        dark: {
+          bg: '#131811',
+          surface: '#1C231A',
+          card: '#1C231A',
+          accent: '#728A58',
+          text: '#FFF8EC',
+          border: '#2C3824',
+          hover: '#24301F',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -74,6 +84,8 @@ export default {
         soft: '0 2px 12px rgba(84, 107, 65, 0.08)',
         'soft-lg': '0 4px 24px rgba(84, 107, 65, 0.12)',
         warm: '0 2px 12px rgba(84, 107, 65, 0.06)',
+        'dark-sm': '0 2px 12px rgba(0, 0, 0, 0.3)',
+        'dark-lg': '0 4px 24px rgba(0, 0, 0, 0.4)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

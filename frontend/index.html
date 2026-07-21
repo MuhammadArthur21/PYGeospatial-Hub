@@ -8,9 +8,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script>
+      // Theme initialization — prevents flash
+      (function() {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <title>PyGeospatial Hub</title>
   </head>
-  <body class="bg-earth-50 text-earth-900 antialiased">
+  <body class="bg-earth-50 text-earth-900 antialiased dark:bg-dark-bg dark:text-dark-text">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -22,9 +22,28 @@
   ::-webkit-scrollbar-thumb {
     @apply bg-earth-400 rounded-full hover:bg-earth-500;
   }
+
+  /* Dark mode base */
+  .dark * {
+    @apply border-dark-border;
+  }
+  .dark body {
+    @apply bg-dark-bg text-dark-text;
+  }
+  .dark ::selection {
+    @apply bg-dark-accent/30 text-dark-text;
+  }
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-dark-surface;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-dark-border rounded-full hover:bg-dark-accent/50;
+  }
 }
 
 @layer components {
+  /* ===== LIGHT MODE (default) ===== */
+
   /* Warm glass card */
   .glass-card {
     @apply bg-white/80 backdrop-blur-sm border border-earth-200 
@@ -70,12 +89,7 @@
            transition-all duration-200;
   }
 
-  /* Select field */
-  .select-field {
-    @apply input-field appearance-none cursor-pointer;
-  }
-
-  /* Badge */
+  /* Badges */
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
@@ -89,7 +103,7 @@
     @apply badge bg-rose-100 text-rose-700 border border-rose-200;
   }
 
-  /* Code block area */
+  /* Code area */
   .code-area {
     @apply bg-earth-100 border border-earth-200 rounded-lg font-mono text-sm text-earth-800;
   }
@@ -113,4 +127,108 @@
   .stat-label {
     @apply text-sm text-earth-500;
   }
+
+  /* ===== DARK MODE OVERRIDES ===== */
+
+  .dark .glass-card {
+    @apply bg-dark-card/90 backdrop-blur-sm border-dark-border 
+           shadow-dark-sm rounded-xl;
+  }
+  .dark .glass-card-hover {
+    @apply transition-all duration-300 hover:shadow-dark-lg 
+           hover:border-dark-accent/50 hover:-translate-y-0.5;
+  }
+
+  .dark .gradient-text {
+    @apply bg-gradient-to-r from-dark-accent to-dark-text;
+  }
+
+  .dark .btn-primary {
+    @apply bg-dark-accent hover:bg-dark-accent/80 text-dark-bg font-semibold
+           hover:shadow-lg hover:shadow-dark-accent/25
+           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .dark .btn-secondary {
+    @apply bg-transparent border-2 border-dark-border
+           hover:border-dark-accent hover:text-dark-text
+           text-dark-accent font-medium rounded-lg 
+           transition-all duration-200 active:scale-[0.98];
+  }
+
+  .dark .btn-ghost {
+    @apply px-4 py-2 hover:bg-dark-hover text-dark-accent hover:text-dark-text 
+           font-medium rounded-lg transition-all duration-200;
+  }
+
+  .dark .input-field {
+    @apply w-full px-3 py-2 bg-dark-surface border-2 border-dark-border 
+           rounded-lg text-dark-text placeholder-dark-accent/50 
+           focus:outline-none focus:ring-2 focus:ring-dark-accent/50 focus:border-dark-accent
+           transition-all duration-200;
+  }
+
+  .dark .badge-beginner {
+    @apply badge bg-dark-accent/20 text-dark-accent border border-dark-accent/30;
+  }
+  .dark .badge-intermediate {
+    @apply badge bg-amber-400/20 text-amber-400 border border-amber-400/30;
+  }
+  .dark .badge-advanced {
+    @apply badge bg-rose-400/20 text-rose-400 border border-rose-400/30;
+  }
+
+  .dark .code-area {
+    @apply bg-dark-surface border-dark-border rounded-lg font-mono text-sm text-dark-text/80;
+  }
+
+  .dark .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-dark-accent/70 
+           hover:text-dark-text hover:bg-dark-hover transition-all duration-200 cursor-pointer;
+  }
+  .dark .sidebar-item.active {
+    @apply text-dark-text bg-dark-accent/15 border border-dark-accent/30 font-medium;
+  }
+
+  .dark .stat-label {
+    @apply text-sm text-dark-accent/60;
+  }
+
+  /* ===== DARK MODE UTILITY OVERRIDES ===== */
+  /* These make pages work without adding dark: to every class */
+
+  .dark .text-earth-900 { color: #FFF8EC; }
+  .dark .text-earth-800 { color: rgba(255, 248, 236, 0.9); }
+  .dark .text-earth-700 { color: rgba(255, 248, 236, 0.75); }
+  .dark .text-earth-600 { color: #728A58; }
+  .dark .text-earth-500 { color: rgba(114, 138, 88, 0.6); }
+  .dark .text-earth-400 { color: rgba(114, 138, 88, 0.5); }
+  .dark .text-earth-300 { color: rgba(114, 138, 88, 0.35); }
+
+  .dark .text-primary-600 { color: #728A58; }
+  .dark .text-primary-700 { color: #FFF8EC; }
+  .dark .text-primary-400 { color: #728A58; }
+
+  .dark .bg-earth-50 { background-color: #131811; }
+  .dark .bg-earth-100 { background-color: #1C231A; }
+  .dark .bg-primary-50 { background-color: rgba(114, 138, 88, 0.1); }
+  .dark .bg-primary-100 { background-color: rgba(114, 138, 88, 0.15); }
+  .dark .bg-sage-100 { background-color: rgba(114, 138, 88, 0.12); }
+
+  .dark .border-earth-200 { border-color: #2C3824; }
+  .dark .border-earth-300 { border-color: #2C3824; }
+
+  .dark .hover\:bg-earth-100:hover { background-color: #24301F; }
+  .dark .hover\:text-primary-600:hover { color: #728A58; }
+  .dark .hover\:text-primary-700:hover { color: #FFF8EC; }
+  .dark .hover\:border-primary-400:hover { border-color: #728A58; }
+
+  .dark .bg-gradient-to-r\:from-primary-100\/50\:to-sage-100\/50 {
+    background-image: none;
+  }
+
+  .dark .from-primary-100\/50 { --tw-gradient-from: rgba(114, 138, 88, 0.05); }
+  .dark .to-sage-100\/50 { --tw-gradient-to: rgba(28, 35, 26, 0.8); }
+  .dark .from-primary-200\/30 { --tw-gradient-from: rgba(114, 138, 88, 0.05); }
+  .dark .to-earth-50 { --tw-gradient-to: #131811; }
 }
