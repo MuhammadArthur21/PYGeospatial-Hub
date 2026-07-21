@@ -18,7 +18,7 @@ export default function LibrariesIndex() {
     if (search) params.search = search
     if (activeCategory) params.category = activeCategory
     if (difficulty) params.difficulty = difficulty
-    api.get('/libraries', { params })
+    api.get('/libraries', { params: { ...params, limit: 200 } })
       .then(res => {
         const data = res.data?.data || (Array.isArray(res.data) ? res.data : [])
         setLibraries(data)

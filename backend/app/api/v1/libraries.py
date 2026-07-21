@@ -14,7 +14,7 @@ async def list_libraries(
     difficulty: Optional[str] = Query(None, description="Filter by difficulty level"),
     search: Optional[str] = Query(None, description="Search by name or description"),
     page: int = Query(1, ge=1),
-    limit: int = Query(50, ge=1, le=100),
+    limit: int = Query(200, ge=1, le=200),
 ):
     """List all libraries with filters"""
     libraries = LibraryService.search_libraries(
