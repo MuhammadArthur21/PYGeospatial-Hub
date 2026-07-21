@@ -16,6 +16,7 @@ from app.api.v1.votes import router as votes_router
 from app.api.v1.ai import router as ai_router
 from app.api.v1.subscriptions import router as subscriptions_router
 from app.api.v1.converter import router as converter_router
+from app.api.v1.workspace import router as workspace_router
 
 api_router = APIRouter()
 
@@ -37,4 +38,5 @@ api_router.include_router(votes_router, prefix="/votes", tags=["Community"])
 api_router.include_router(ai_router, prefix="/ai", tags=["AI Assistant"])
 api_router.include_router(subscriptions_router, prefix="/subscriptions", tags=["Subscriptions"])
 api_router.include_router(converter_router, prefix="/converter", tags=["Converter"])
+api_router.include_router(workspace_router, prefix="", tags=["Workspaces"])
 

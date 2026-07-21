@@ -1,0 +1,171 @@
+# PyGeospatial Hub - Kubernetes Deployment Manifests (Fase 4)
+# apiVersion: apps/v1
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pygeo-backend
+  labels:
+    app: pygeo-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pygeo-backend
+  template:
+    metadata:
+      labels:
+        app: pygeo-backend
+    spec:
+      containers:
+      - name: backend
+        image: pygeospatial-hub/backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://pygeo:pygeo_password@postgis-service:5432/pygeospatial_hub"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379/0"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pygeo-backend-service
+spec:
+  selector:
+    app: pygeo-backend
+  ports:
+  - port: 80
+    targetPort: 8000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pygeo-frontend
+  labels:
+    app: pygeo-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pygeo-frontend
+  template:
+    metadata:
+      labels:
+        app: pygeo-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: pygeospatial-hub/frontend:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pygeo-frontend-service
+spec:
+  selector:
+    app: pygeo-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgis
+spec:
+  serviceName: postgis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgis
+  template:
+    metadata:
+      labels:
+        app: postgis
+    spec:
+      containers:
+      - name: postgis
+        image: postgis/postgis:16-3.4
+        env:
+        - name: POSTGRES_USER
+          value: "pygeo"
+        - name: POSTGRES_PASSWORD
+          value: "pygeo_password"
+        - name: POSTGRES_DB
+          value: "pygeospatial_hub"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgis-data
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgis-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgis-service
+spec:
+  selector:
+    app: postgis
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
