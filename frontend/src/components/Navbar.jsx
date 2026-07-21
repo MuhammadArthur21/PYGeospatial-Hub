@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Earth, BookOpen, Wrench, PlayCircle, GraduationCap,
-  FileText, LayoutDashboard, Menu, X, ChevronDown
+  FileText, LayoutDashboard, Menu, X
 } from 'lucide-react'
 
 const navItems = [
@@ -19,19 +19,19 @@ export default function Navbar() {
   const location = useLocation()
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-950/80 backdrop-blur-xl border-b border-surface-800">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-earth-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-ocean-500 
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-300 
                           flex items-center justify-center text-white font-bold text-sm
-                          shadow-lg shadow-primary-500/25">
+                          shadow-md shadow-primary-500/20">
               PG
             </div>
             <span className="font-semibold text-lg hidden sm:block">
               <span className="gradient-text">PyGeospatial</span>
-              <span className="text-gray-400 ml-1">Hub</span>
+              <span className="text-earth-500 ml-1">Hub</span>
             </span>
           </Link>
 
@@ -91,7 +91,7 @@ export default function Navbar() {
               </Link>
             )
           })}
-          <hr className="my-2 border-surface-700" />
+          <hr className="my-2 border-earth-200" />
           <Link
             to="/dashboard"
             onClick={() => setMobileOpen(false)}

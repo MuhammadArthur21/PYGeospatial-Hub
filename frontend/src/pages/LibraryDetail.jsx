@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   ArrowLeft, ExternalLink, BookOpen, PlayCircle,
-  Code, Star, Tag, Layers
+  Code, Tag, Layers
 } from 'lucide-react'
 import { Card, CardHeader, CardTitle } from '@/components/Card'
 
@@ -43,20 +43,10 @@ print(point.within(polygon))`,
     tags: ['dataframe', 'vector', 'analysis'],
     useCases: ['Read shapefiles', 'Spatial join', 'Choropleth maps', 'Data aggregation'],
     code: `import geopandas as gpd
-
-# Read a GeoJSON file
 gdf = gpd.read_file('sample.geojson')
-
-# Basic data exploration
 print(gdf.head())
 print(gdf.geometry.area)
-
-# Spatial join
-joined = gpd.sjoin(
-  gdf, 
-  other_gdf, 
-  predicate='intersects'
-)`,
+joined = gpd.sjoin(gdf, other_gdf, predicate='intersects')`,
   },
   rasterio: {
     name: 'Rasterio',
@@ -68,18 +58,10 @@ joined = gpd.sjoin(
     tags: ['raster', 'band', 'satellite', 'tiff'],
     useCases: ['Read satellite imagery', 'Clip raster by polygon', 'Reproject rasters', 'Extract band statistics'],
     code: `import rasterio
-from rasterio.plot import show
-
-# Open a GeoTIFF file
 with rasterio.open('image.tif') as src:
-    # Read first band
     band = src.read(1)
-    
-    # Get metadata
     print(f"CRS: {src.crs}")
     print(f"Bounds: {src.bounds}")
-    
-    # Get stats
     print(f"Min: {band.min()}, Max: {band.max()}")`,
   },
   pyproj: {
@@ -92,18 +74,8 @@ with rasterio.open('image.tif') as src:
     tags: ['crs', 'projection', 'transformation'],
     useCases: ['Reproject coordinates', 'Transform between CRS', 'Calculate geodesic distance'],
     code: `from pyproj import Transformer
-
-# Create CRS transformer
-transformer = Transformer.from_crs(
-    "EPSG:4326",  # WGS84
-    "EPSG:3857",  # Web Mercator
-    always_xy=True
-)
-
-# Transform coordinates
-x, y = transformer.transform(
-    106.8, -6.2
-)
+transformer = Transformer.from_crs("EPSG:4326", "EPSG:3857", always_xy=True)
+x, y = transformer.transform(106.8, -6.2)
 print(f"Mercator: {x:.2f}, {y:.2f}")`,
   },
 }
@@ -116,8 +88,8 @@ export default function LibraryDetail() {
   if (!lib) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h2 className="text-2xl font-bold text-white mb-4">Library Not Found</h2>
-        <p className="text-gray-400 mb-8">The library you're looking for doesn't exist.</p>
+        <h2 className="text-2xl font-bold text-earth-900 mb-4">Library Not Found</h2>
+        <p className="text-earth-500 mb-8">The library you're looking for doesn't exist.</p>
         <Link to="/libraries" className="btn-primary inline-flex items-center gap-2">
           <ArrowLeft size={16} />
           Back to Libraries
@@ -134,20 +106,17 @@ export default function LibraryDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Back button */}
-      <Link to="/libraries" className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors">
+      <Link to="/libraries" className="inline-flex items-center gap-2 text-earth-500 hover:text-primary-600 mb-6 transition-colors">
         <ArrowLeft size={16} />
         Back to Libraries
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Header */}
           <Card>
             <CardHeader>
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-ocean-500 
-                            flex items-center justify-center text-2xl text-white font-bold shadow-lg">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-300 
+                            flex items-center justify-center text-2xl text-white font-bold shadow-md">
                 {lib.name[0]}
               </div>
               <div>
@@ -160,17 +129,16 @@ export default function LibraryDetail() {
                     {lib.difficulty}
                   </span>
                 </div>
-                <p className="text-sm text-gray-400">v{lib.version}</p>
+                <p className="text-sm text-earth-500">v{lib.version}</p>
               </div>
             </CardHeader>
-            <p className="text-gray-300 leading-relaxed">{lib.description}</p>
+            <p className="text-earth-700 leading-relaxed">{lib.description}</p>
           </Card>
 
-          {/* Code Example */}
           <Card>
             <CardHeader className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Code size={18} className="text-primary-400" />
+                <Code size={18} className="text-primary-600" />
                 <CardTitle>Quick Start Example</CardTitle>
               </div>
               <button onClick={copyCode} className="btn-ghost text-xs">
@@ -178,7 +146,7 @@ export default function LibraryDetail() {
               </button>
             </CardHeader>
             <div className="code-area p-4 overflow-x-auto">
-              <pre className="text-gray-300"><code>{lib.code}</code></pre>
+              <pre><code>{lib.code}</code></pre>
             </div>
             <div className="mt-4">
               <Link to={`/sandbox?library=${id}`} className="btn-primary inline-flex items-center gap-2">
@@ -188,16 +156,15 @@ export default function LibraryDetail() {
             </div>
           </Card>
 
-          {/* Use Cases */}
           <Card>
             <CardHeader>
-              <Layers size={18} className="text-primary-400" />
+              <Layers size={18} className="text-primary-600" />
               <CardTitle>Use Cases</CardTitle>
             </CardHeader>
             <div className="grid grid-cols-2 gap-3">
               {lib.useCases.map((uc, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-gray-300">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary-400" />
+                <div key={i} className="flex items-center gap-2 text-sm text-earth-700">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
                   {uc}
                 </div>
               ))}
@@ -205,12 +172,10 @@ export default function LibraryDetail() {
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
-          {/* Quick Actions */}
           <Card>
             <CardHeader>
-              <PlayCircle size={18} className="text-primary-400" />
+              <PlayCircle size={18} className="text-primary-600" />
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <div className="space-y-3">
@@ -232,16 +197,15 @@ export default function LibraryDetail() {
             </div>
           </Card>
 
-          {/* Tags */}
           <Card>
             <CardHeader>
-              <Tag size={18} className="text-primary-400" />
+              <Tag size={18} className="text-primary-600" />
               <CardTitle>Tags</CardTitle>
             </CardHeader>
             <div className="flex flex-wrap gap-2">
               {lib.tags.map((tag) => (
                 <span key={tag} className="px-3 py-1 rounded-full text-xs font-medium
-                  bg-primary-500/10 text-primary-400 border border-primary-500/20">
+                  bg-primary-50 text-primary-700 border border-primary-200">
                   {tag}
                 </span>
               ))}

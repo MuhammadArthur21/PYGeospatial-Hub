@@ -1,18 +1,17 @@
 import { cn } from '@/utils/cn'
 
 function Card({ className, children, hover = false, ...props }) {
-  const Comp = hover ? 'div' : 'div'
   return (
-    <Comp
+    <div
       className={cn(
-        'glass-card p-6',
+        'glass-card p-6 transition-all duration-300',
         hover && 'glass-card-hover cursor-pointer',
         className
       )}
       {...props}
     >
       {children}
-    </Comp>
+    </div>
   )
 }
 
@@ -26,7 +25,7 @@ function CardHeader({ className, children, ...props }) {
 
 function CardTitle({ className, children, ...props }) {
   return (
-    <h3 className={cn('text-lg font-semibold text-white', className)} {...props}>
+    <h3 className={cn('text-lg font-semibold text-earth-900', className)} {...props}>
       {children}
     </h3>
   )
@@ -34,7 +33,7 @@ function CardTitle({ className, children, ...props }) {
 
 function CardDescription({ className, children, ...props }) {
   return (
-    <p className={cn('text-sm text-gray-400', className)} {...props}>
+    <p className={cn('text-sm text-earth-500', className)} {...props}>
       {children}
     </p>
   )

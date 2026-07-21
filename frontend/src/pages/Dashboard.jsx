@@ -1,15 +1,12 @@
-import {
-  LayoutDashboard, Code, Download, Eye, Clock,
-  TrendingUp, BarChart3, Users, BookOpen
-} from 'lucide-react'
+import { Code, Download, Eye, Clock, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
 
 const stats = [
-  { label: 'Executions Today', value: '47', icon: Code, change: '+12%', color: 'from-primary-500 to-emerald-500' },
-  { label: 'Saved Scripts', value: '12', icon: BookOpen, change: '+3', color: 'from-ocean-500 to-blue-500' },
-  { label: 'Datasets Uploaded', value: '8', icon: Download, change: '+1', color: 'from-purple-500 to-pink-500' },
-  { label: 'Storage Used', value: '156 MB', icon: Eye, change: 'of 500 MB', color: 'from-amber-500 to-orange-500' },
+  { label: 'Executions Today', value: '47', icon: Code, change: '+12%', color: 'from-primary-500 to-primary-300' },
+  { label: 'Saved Scripts', value: '12', icon: BookOpen, change: '+3', color: 'from-primary-600 to-sage-400' },
+  { label: 'Datasets Uploaded', value: '8', icon: Download, change: '+1', color: 'from-earth-600 to-earth-400' },
+  { label: 'Storage Used', value: '156 MB', icon: Eye, change: 'of 500 MB', color: 'from-primary-400 to-sage-300' },
 ]
 
 const recentScripts = [
@@ -29,15 +26,14 @@ export default function Dashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-3xl font-bold text-earth-900 mb-2">
           <span className="gradient-text">Dashboard</span>
         </h1>
-        <p className="text-gray-400">
+        <p className="text-earth-500">
           Your personal overview of activity and usage
         </p>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => {
           const Icon = stat.icon
@@ -48,7 +44,7 @@ export default function Dashboard() {
                               flex items-center justify-center`}>
                   <Icon size={16} className="text-white" />
                 </div>
-                <span className="text-xs text-green-400 font-medium">{stat.change}</span>
+                <span className="text-xs text-primary-600 font-medium">{stat.change}</span>
               </div>
               <span className="stat-value">{stat.value}</span>
               <span className="stat-label">{stat.label}</span>
@@ -58,63 +54,55 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Scripts */}
         <Card>
           <CardHeader>
-            <BookOpen size={18} className="text-primary-400" />
+            <BookOpen size={18} className="text-primary-600" />
             <CardTitle>Recent Scripts</CardTitle>
           </CardHeader>
           <div className="space-y-3">
             {recentScripts.map((script) => (
               <div key={script.id}
-                className="flex items-center justify-between px-3 py-2 rounded-lg
-                         hover:bg-surface-800 transition-colors cursor-pointer">
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-earth-100 transition-colors cursor-pointer">
                 <div>
-                  <p className="text-sm text-gray-200 font-medium">{script.title}</p>
-                  <p className="text-xs text-gray-500">Updated {script.updated}</p>
+                  <p className="text-sm text-earth-800 font-medium">{script.title}</p>
+                  <p className="text-xs text-earth-500">Updated {script.updated}</p>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${
                   script.status === 'published'
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-yellow-500/20 text-yellow-400'
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'bg-amber-100 text-amber-700'
                 }`}>
                   {script.status}
                 </span>
               </div>
             ))}
           </div>
-          <Link to="/sandbox" className="btn-ghost text-sm mt-4 w-full text-center">
-            Create New Script
-          </Link>
+          <Link to="/sandbox" className="btn-ghost text-sm mt-4 w-full text-center">Create New Script</Link>
         </Card>
 
-        {/* Recent Executions */}
         <Card>
           <CardHeader>
-            <Clock size={18} className="text-primary-400" />
+            <Clock size={18} className="text-primary-600" />
             <CardTitle>Recent Executions</CardTitle>
           </CardHeader>
           <div className="space-y-3">
             {recentExecutions.map((exec) => (
               <div key={exec.id}
-                className="flex items-center justify-between px-3 py-2 rounded-lg
-                         hover:bg-surface-800 transition-colors cursor-pointer">
+                className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-earth-100 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className={`w-2 h-2 rounded-full ${
-                    exec.status === 'success' ? 'bg-green-400' : 'bg-red-400'
+                    exec.status === 'success' ? 'bg-primary-500' : 'bg-rose-400'
                   }`} />
                   <div>
-                    <p className="text-sm text-gray-200 font-medium">#{exec.id} - {exec.library}</p>
-                    <p className="text-xs text-gray-500">{exec.time}</p>
+                    <p className="text-sm text-earth-800 font-medium">#{exec.id} - {exec.library}</p>
+                    <p className="text-xs text-earth-500">{exec.time}</p>
                   </div>
                 </div>
-                <span className="text-xs text-gray-500">{exec.duration}</span>
+                <span className="text-xs text-earth-500">{exec.duration}</span>
               </div>
             ))}
           </div>
-          <Link to="/sandbox" className="btn-ghost text-sm mt-4 w-full text-center">
-            View All Executions
-          </Link>
+          <Link to="/sandbox" className="btn-ghost text-sm mt-4 w-full text-center">View All Executions</Link>
         </Card>
       </div>
     </div>
