@@ -1,0 +1,71 @@
+{
+  "type": "FeatureCollection",
+  "name": "indonesia_provinces_sample",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "DKI Jakarta",
+        "population": 10562088,
+        "area_km2": 664,
+        "capital": "Jakarta"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.68, -6.10], [106.97, -6.10], [106.97, -6.37], [106.68, -6.37], [106.68, -6.10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Jawa Barat",
+        "population": 49316712,
+        "area_km2": 35377,
+        "capital": "Bandung"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.40, -6.10], [108.80, -6.10], [108.80, -7.80], [106.40, -7.80], [106.40, -6.10]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Jawa Tengah",
+        "population": 36516035,
+        "area_km2": 32800,
+        "capital": "Semarang"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[108.80, -6.50], [111.10, -6.50], [111.10, -7.80], [108.80, -7.80], [108.80, -6.50]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Jawa Timur",
+        "population": 40665696,
+        "area_km2": 47799,
+        "capital": "Surabaya"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[111.00, -6.80], [114.40, -6.80], [114.40, -8.80], [111.00, -8.80], [111.00, -6.80]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Bali",
+        "population": 4317404,
+        "area_km2": 5780,
+        "capital": "Denpasar"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[114.43, -8.05], [115.71, -8.05], [115.71, -8.85], [114.43, -8.85], [114.43, -8.05]]]
+      }
+    }
+  ]
+}

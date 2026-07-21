@@ -1,0 +1,12 @@
+{
+  "type": "FeatureCollection",
+  "name": "jakarta_landmarks",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Monas", "type": "Monument" }, "geometry": { "type": "Point", "coordinates": [106.8272, -6.1751] } },
+    { "type": "Feature", "properties": { "name": "Kota Tua", "type": "Historical" }, "geometry": { "type": "Point", "coordinates": [106.8133, -6.1352] } },
+    { "type": "Feature", "properties": { "name": "Ancol", "type": "Recreation" }, "geometry": { "type": "Point", "coordinates": [106.8308, -6.1224] } },
+    { "type": "Feature", "properties": { "name": "TMII", "type": "Park" }, "geometry": { "type": "Point", "coordinates": [106.8959, -6.3024] } },
+    { "type": "Feature", "properties": { "name": "Bandara Soekarno-Hatta", "type": "Airport" }, "geometry": { "type": "Point", "coordinates": [106.6558, -6.1275] } },
+    { "type": "Feature", "properties": { "name": "GBK Stadium", "type": "Sports" }, "geometry": { "type": "Point", "coordinates": [106.8022, -6.2183] } }
+  ]
+}

@@ -1,68 +1,64 @@
 # PyGeospatial Hub - Comments API
-# Community commenting system (Section 4.6)
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
 router = APIRouter()
 
-# In-memory comment store
-COMMENTS = []
-_next_id = 1
-
-
 class CommentCreate(BaseModel):
-    target_type: str  # 'script' | 'tool' | 'library'
-    target_id: int
+    target_type: str  # 'script' or 'tool'
+    target_id: str
     content: str
-    author: str = "anonymous"
-
+    author: Optional[str] = "Anonymous Geodev"
 
 class CommentResponse(BaseModel):
     id: int
     target_type: str
-    target_id: int
+    target_id: str
     content: str
     author: str
     created_at: str
-    upvotes: int = 0
 
+# In-memory comments repository
+COMMENTS_DB = [
+    {
+        "id": 1,
+        "target_type": "script",
+        "target_id": "geopandas-buffer",
+        "content": "Sangat membantu! Buffer 0.01 derajat (~1.1km) bekerja sempurna untuk analisis DKI Jakarta.",
+        "author": "Budi Santoso",
+        "created_at": "2026-07-20 14:30"
+    },
+    {
+        "id": 2,
+        "target_type": "script",
+        "target_id": "geopandas-buffer",
+        "content": "Bisa tambahkan contoh kalkulasi CRS Web Mercator meter juga?",
+        "author": "Siti Rahma",
+        "created_at": "2026-07-21 09:15"
+    }
+]
 
-@router.post("", response_model=CommentResponse, status_code=201)
+@router.get("/{target_id}", response_model=List[CommentResponse])
+async def get_comments(target_id: str):
+    """Retrieve all comments for a specific script or tool"""
+    return [c for c in COMMENTS_DB if c["target_id"] == target_id]
+
+@router.post("/", response_model=CommentResponse)
 async def create_comment(comment: CommentCreate):
-    """Add a comment to a script, tool, or library"""
-    global _next_id
-    c = {
-        "id": _next_id,
+    """Post a new comment"""
+    if not comment.content.strip():
+        raise HTTPException(status_code=400, detail="Comment content cannot be empty")
+        
+    new_comment = {
+        "id": len(COMMENTS_DB) + 1,
         "target_type": comment.target_type,
         "target_id": comment.target_id,
-        "content": comment.content,
-        "author": comment.author,
-        "created_at": datetime.utcnow().isoformat(),
-        "upvotes": 0,
+        "content": comment.content.strip(),
+        "author": comment.author or "Anonymous Geodev",
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M")
     }
-    _next_id += 1
-    COMMENTS.append(c)
-    return c
-
-
-@router.get("", response_model=List[CommentResponse])
-async def list_comments(
-    target_type: str = Query(...),
-    target_id: int = Query(...),
-):
-    """Get comments for a specific target"""
-    return [
-        c for c in COMMENTS
-        if c["target_type"] == target_type and c["target_id"] == target_id
-    ]
-
-
-@router.delete("/{comment_id}", status_code=204)
-async def delete_comment(comment_id: int):
-    """Delete a comment"""
-    global COMMENTS
-    COMMENTS = [c for c in COMMENTS if c["id"] != comment_id]
-    return None
+    COMMENTS_DB.append(new_comment)
+    return new_comment

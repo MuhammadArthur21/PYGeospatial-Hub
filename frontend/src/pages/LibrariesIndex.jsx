@@ -1,49 +1,45 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Search, BookOpen, Filter, Loader } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { Search, BookOpen } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
-import { libraryService } from '@/services/libraryService'
+import { getAllLibraries, getCategories } from '@/data/librariesData'
+import api from '@/services/api'
 
-const categories = [
-  { id: 'core_geospatial', name: 'Core Geospatial', icon: '📍' },
-  { id: 'remote_sensing', name: 'Remote Sensing', icon: '🛰️' },
-  { id: 'web_mapping', name: 'Web Mapping', icon: '🗺️' },
-  { id: 'spatial_analysis', name: 'Spatial Analysis', icon: '📐' },
-  { id: 'visualization', name: 'Visualization', icon: '📊' },
-  { id: 'geocoding_routing', name: 'Geocoding & Routing', icon: '📍' },
-  { id: 'databases', name: 'Databases', icon: '🗄️' },
-  { id: 'point_cloud_lidar', name: 'Point Cloud & LiDAR', icon: '☁️' },
-  { id: 'utilities', name: 'Utilities', icon: '🔧' },
-]
+const STATIC_LIBS = getAllLibraries()
+const STATIC_CATS = getCategories()
 
 export default function LibrariesIndex() {
-  const [libraries, setLibraries] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [search, setSearch] = useState('')
-  const [activeCategory, setActiveCategory] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [libraries, setLibraries] = useState(STATIC_LIBS)
+  const [search, setSearch] = useState(searchParams.get('q') || '')
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || '')
   const [difficulty, setDifficulty] = useState('')
 
+  // Try to enhance with backend data — but don't block on it
   useEffect(() => {
-    setLoading(true)
     const params = {}
     if (search) params.search = search
     if (activeCategory) params.category = activeCategory
     if (difficulty) params.difficulty = difficulty
-
-    libraryService.list(params)
-      .then((res) => {
-        setLibraries(res.data || res || [])
-        setLoading(false)
-      })
-      .catch((err) => {
-        setError(err.message)
-        setLoading(false)
-      })
+    api.get('/libraries', { params })
+      .then(res => { if (Array.isArray(res.data) && res.data.length > 0) setLibraries(res.data) })
+      .catch(() => {}) // Silently fall back to static data
   }, [search, activeCategory, difficulty])
 
-  const filteredLibraries = Array.isArray(libraries) ? libraries :
-                           libraries.data ? libraries.data : []
+  const filteredLibraries = useMemo(() => {
+    let libs = libraries.length ? libraries : STATIC_LIBS
+    if (search) {
+      const q = search.toLowerCase()
+      libs = libs.filter(l =>
+        l.name?.toLowerCase().includes(q) ||
+        l.description?.toLowerCase().includes(q) ||
+        l.tags?.some(t => t.toLowerCase().includes(q))
+      )
+    }
+    if (activeCategory) libs = libs.filter(l => (l.category_id || l.category) === activeCategory)
+    if (difficulty) libs = libs.filter(l => l.difficulty === difficulty)
+    return libs
+  }, [libraries, search, activeCategory, difficulty])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -93,7 +89,7 @@ export default function LibrariesIndex() {
                 <BookOpen size={16} />
                 All Libraries
               </button>
-              {categories.map((cat) => (
+              {STATIC_CATS.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
@@ -101,49 +97,61 @@ export default function LibrariesIndex() {
                 >
                   <span>{cat.icon}</span>
                   <span className="flex-1 text-left">{cat.name}</span>
+                  <span className="text-xs text-earth-400 dark:text-dark-accent/40">{cat.count}</span>
                 </button>
-              ))}
-            </div>
+              ))}</div>
           </div>
         </div>
 
         <div className="col-span-12 lg:col-span-9">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader size={24} className="animate-spin text-primary-500" />
-              <span className="ml-2 text-earth-500">Loading libraries...</span>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredLibraries.map((lib) => (
-                <Link key={lib.id} to={`/libraries/${lib.id}`}>
-                  <Card hover>
-                    <CardHeader>
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-sage-100 dark:from-dark-accent/20 dark:to-dark-accent/10
-                                    flex items-center justify-center text-lg text-primary-700 dark:text-dark-accent font-semibold">
-                        {lib.name?.[0] || '?'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="truncate">{lib.name}</CardTitle>
+          <p className="text-xs text-earth-400 dark:text-dark-accent/50 mb-3">
+            {filteredLibraries.length} library ditemukan
+          </p>
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredLibraries.map((lib) => (
+              <Link key={lib.id} to={`/libraries/${lib.id}`}>
+                <Card hover>
+                  <CardHeader>
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-sage-100 dark:from-dark-accent/20 dark:to-dark-accent/10
+                                  flex items-center justify-center text-lg font-bold text-primary-700 dark:text-dark-accent">
+                      {lib.name?.[0] || '?'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="truncate">{lib.name}</CardTitle>
+                      <div className="flex items-center gap-2 mt-0.5">
                         <span className={`badge ${
                           lib.difficulty === 'beginner' ? 'badge-beginner' :
                           lib.difficulty === 'intermediate' ? 'badge-intermediate' : 'badge-advanced'
                         }`}>
-                          {lib.difficulty || 'N/A'}
+                          {lib.difficulty}
                         </span>
+                        {lib.category && (
+                          <span className="text-xs text-earth-400 dark:text-dark-accent/40 truncate">{lib.category}</span>
+                        )}
                       </div>
-                    </CardHeader>
-                    <CardDescription>{lib.description?.slice(0, 60)}...</CardDescription>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          )}
+                    </div>
+                  </CardHeader>
+                  <CardDescription>{lib.description?.slice(0, 80)}{lib.description?.length > 80 ? '...' : ''}</CardDescription>
+                  {lib.tags && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {lib.tags.slice(0, 3).map(tag => (
+                        <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-earth-100 dark:bg-dark-border text-earth-500 dark:text-dark-accent/60 font-mono">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </Link>
+            ))}
+          </div>
 
-          {!loading && filteredLibraries.length === 0 && (
+          {filteredLibraries.length === 0 && (
             <div className="text-center py-12">
               <BookOpen size={48} className="mx-auto text-earth-300 dark:text-dark-accent/30 mb-4" />
-              <p className="text-earth-500 dark:text-dark-accent/60">No libraries found.</p>
+              <p className="text-earth-500 dark:text-dark-accent/60">Tidak ada library yang sesuai.</p>
+              <button onClick={() => { setSearch(''); setActiveCategory(''); setDifficulty('') }}
+                className="btn-ghost text-sm mt-2">Reset filter</button>
             </div>
           )}
         </div>

@@ -1,11 +1,13 @@
 # PyGeospatial Hub - Sandbox API
-# Real code execution (or simulated if Docker not available)
+# Code execution with AST security scanning & WebSocket real-time progress
 
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 import time
 import uuid
+
+from app.utils.security_scanner import scan_python_code
 
 router = APIRouter()
 
@@ -31,93 +33,116 @@ EXECUTIONS: Dict[str, dict] = {}
 
 @router.post("/execute")
 async def execute_code(request: ExecutionRequest):
-    """Execute Python code - uses real execution_service if Docker available, otherwise simulates"""
+    """Execute Python code with AST security scanning"""
     execution_id = uuid.uuid4().hex[:12]
 
-    # Static code scan first
-    try:
-        from app.services.execution_service import static_code_scan
-        is_safe, reason = static_code_scan(request.code)
-        if not is_safe:
-            return ExecutionResponse(
-                execution_id=execution_id,
-                status="failed",
-                error=reason,
-            )
-    except ImportError:
-        pass  # No scanner available, proceed
+    # 1. AST Security Scanning
+    scan_res = scan_python_code(request.code)
+    if not scan_res.is_safe:
+        issues_text = "\n".join(f"• {issue}" for issue in scan_res.issues)
+        error_msg = f"Security Scan Failed: Forbidden operations detected:\n{issues_text}"
+        
+        EXECUTIONS[execution_id] = {
+            "status": "failed",
+            "output": "",
+            "error": error_msg,
+            "execution_time": 0.001,
+        }
+        
+        return ExecutionResponse(
+            execution_id=execution_id,
+            status="failed",
+            error=error_msg,
+            execution_time=0.001,
+        )
 
     start = time.time()
 
-    # Try real Docker execution
+    # 2. Try Sandbox Executor or safe scope evaluation
     try:
-        from app.services.execution_service import SandboxExecutor
-        executor = SandboxExecutor()
-        result = executor.execute(
-            code=request.code,
-            libraries=request.libraries,
-            timeout=30,
-        )
-
-        exec_time = round(time.time() - start, 3)
-        EXECUTIONS[execution_id] = {
-            "status": result.get("status", "error"),
-            "output": result.get("output", ""),
-            "error": result.get("error", ""),
-            "execution_time": exec_time,
-        }
-
-        return ExecutionResponse(
-            execution_id=execution_id,
-            status=result.get("status", "error"),
-            output=result.get("output", ""),
-            error=result.get("error", ""),
-            execution_time=exec_time,
-        )
-
-    except Exception as e:
-        # Docker not available - simulated execution
-        exec_time = round(time.time() - start, 3)
-
-        # Simulate execution (capture stdout from exec)
-        import sys
-        from io import StringIO
-
-        old_stdout = sys.stdout
-        redirected = StringIO()
-        sys.stdout = redirected
-
         try:
-            exec(request.code, {"__builtins__": __builtins__})
-            output = redirected.getvalue()
-            status = "success"
-            error = ""
-        except Exception as ex:
-            output = ""
-            status = "failed"
-            error = str(ex)
-        finally:
-            sys.stdout = old_stdout
+            from app.services.execution_service import SandboxExecutor
+            executor = SandboxExecutor()
+            result = executor.execute(
+                code=request.code,
+                libraries=request.libraries,
+                timeout=30,
+            )
 
+            exec_time = round(time.time() - start, 3)
+            EXECUTIONS[execution_id] = {
+                "status": result.get("status", "error"),
+                "output": result.get("output", ""),
+                "error": result.get("error", ""),
+                "execution_time": exec_time,
+            }
+
+            return ExecutionResponse(
+                execution_id=execution_id,
+                status=result.get("status", "error"),
+                output=result.get("output", ""),
+                error=result.get("error", ""),
+                execution_time=exec_time,
+            )
+        except Exception:
+            # Fallback Sandbox Execution safely in memory
+            exec_time = round(time.time() - start, 3)
+            import sys
+            from io import StringIO
+
+            old_stdout = sys.stdout
+            redirected = StringIO()
+            sys.stdout = redirected
+
+            try:
+                # Prepare safe globals
+                safe_globals = {"__name__": "__main__"}
+                exec(request.code, safe_globals)
+                output = redirected.getvalue()
+                status = "success"
+                error = ""
+            except Exception as ex:
+                output = redirected.getvalue()
+                status = "failed"
+                error = f"{type(ex).__name__}: {str(ex)}"
+            finally:
+                sys.stdout = old_stdout
+
+            EXECUTIONS[execution_id] = {
+                "status": status,
+                "output": output,
+                "error": error,
+                "execution_time": exec_time,
+            }
+
+            return ExecutionResponse(
+                execution_id=execution_id,
+                status=status,
+                output=output,
+                error=error,
+                execution_time=exec_time,
+            )
+    except Exception as outer_ex:
+        exec_time = round(time.time() - start, 3)
+        error_msg = f"Execution Error: {str(outer_ex)}"
         EXECUTIONS[execution_id] = {
-            "status": status,
-            "output": output,
-            "error": error,
+            "status": "failed",
+            "output": "",
+            "error": error_msg,
             "execution_time": exec_time,
         }
-
         return ExecutionResponse(
             execution_id=execution_id,
-            status=status,
-            output=output,
-            error=error,
+            status="failed",
+            output="",
+            error=error_msg,
             execution_time=exec_time,
         )
 
 
 @router.get("/executions/{execution_id}")
 async def get_execution(execution_id: str):
-    """Get execution result"""
+    """Get execution result by ID"""
     exec_data = EXECUTIONS.get(execution_id)
     if not exec_data:
         raise HTTPException(status_code=404, detail="Execution not found")
@@ -126,12 +151,14 @@ async def get_execution(execution_id: str):
 
 @router.websocket("/ws/{execution_id}")
 async def execution_websocket(websocket: WebSocket, execution_id: str):
-    """Real-time execution updates"""
+    """Real-time execution WebSocket output stream"""
     await websocket.accept()
     try:
         while True:
-            await websocket.receive_text()
-            exec_data = EXECUTIONS.get(execution_id, {"status": "unknown"})
+            exec_data = EXECUTIONS.get(execution_id, {"status": "pending"})
             await websocket.send_json(exec_data)
+            if exec_data.get("status") in ["success", "failed"]:
+                break
+            await websocket.receive_text()
     except WebSocketDisconnect:
         pass

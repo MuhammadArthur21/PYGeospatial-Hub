@@ -13,6 +13,9 @@ from app.api.v1.dashboard import router as dashboard_router
 from app.api.v1.users import router as users_router
 from app.api.v1.comments import router as comments_router
 from app.api.v1.votes import router as votes_router
+from app.api.v1.ai import router as ai_router
+from app.api.v1.subscriptions import router as subscriptions_router
+from app.api.v1.converter import router as converter_router
 
 api_router = APIRouter()
 
@@ -31,3 +34,7 @@ api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboar
 api_router.include_router(users_router, prefix="/users", tags=["Users"])
 api_router.include_router(comments_router, prefix="/comments", tags=["Community"])
 api_router.include_router(votes_router, prefix="/votes", tags=["Community"])
+api_router.include_router(ai_router, prefix="/ai", tags=["AI Assistant"])
+api_router.include_router(subscriptions_router, prefix="/subscriptions", tags=["Subscriptions"])
+api_router.include_router(converter_router, prefix="/converter", tags=["Converter"])
+

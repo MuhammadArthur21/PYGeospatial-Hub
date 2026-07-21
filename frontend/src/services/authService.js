@@ -17,8 +17,21 @@ export const authService = {
     return response.data
   },
 
+  async getProfile() {
+    const token = localStorage.getItem('access_token')
+    const response = await api.get('/auth/profile', { params: { token } })
+    return response.data
+  },
+
+  async refresh() {
+    const token = localStorage.getItem('access_token')
+    const response = await api.post('/auth/refresh', null, { params: { token } })
+    return response.data
+  },
+
   logout() {
     localStorage.removeItem('access_token')
+    localStorage.removeItem('user_info')
   },
 
   isAuthenticated() {
