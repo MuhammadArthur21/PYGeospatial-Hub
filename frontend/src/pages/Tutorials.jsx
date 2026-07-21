@@ -15,7 +15,7 @@ const tutorials = [
     code: `import geopandas as gpd
 
 # Load dataset bawaan Natural Earth
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world = gpd.read_file('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson')
 
 # Filter benua Asia
 asia = world[world['continent'] == 'Asia'].copy()

@@ -95,4 +95,4 @@ def dissolve(
 
 def sample_data() -> gpd.GeoDataFrame:
     """Create a sample GeoDataFrame with world countries data"""
-    return gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
+    return gpd.read_file('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson')

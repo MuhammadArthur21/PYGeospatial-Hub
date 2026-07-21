@@ -24,7 +24,7 @@ print(f"Intersects line: {polygon.intersects(line)}")`,
 import json
 
 # Load built-in dataset
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+world = gpd.read_file('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson')
 asia = world[world['continent'] == 'Asia'].copy()
 
 # Analysis

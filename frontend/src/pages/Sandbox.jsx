@@ -16,11 +16,9 @@ const templates = {
   default: `import geopandas as gpd
 import json
 
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-asia = world[world['continent'] == 'Asia']
-print(asia[['name', 'pop_est']].head(10).to_string())
-# Output GeoJSON for map visualization
-print(asia.to_json())`,
+world = gpd.read_file('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson')
+print(world.columns.tolist())
+print(world.head(5).to_string())`,
 
   shapely: `from shapely.geometry import Point, Polygon
 import json
@@ -46,11 +44,10 @@ print(json.dumps(geojson))`,
   geopandas: `import geopandas as gpd
 import json
 
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-asia = world[world['continent'] == 'Asia'].copy()
-asia['area_km2'] = asia.geometry.area / 1e6
-print(asia[['name', 'pop_est', 'area_km2']].nlargest(5, 'area_km2').to_string())
-print(asia.to_json())`,
+world = gpd.read_file('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson')
+world['area_km2'] = world.geometry.area / 1e6
+print(world[['name', 'pop_est', 'area_km2']].nlargest(5, 'area_km2').to_string())
+print(world.to_json())`,
 
   rasterio: `import rasterio
 import numpy as np
