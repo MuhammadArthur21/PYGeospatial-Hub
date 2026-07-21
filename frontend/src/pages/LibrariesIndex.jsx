@@ -2,32 +2,33 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Search, BookOpen } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
-import { getAllLibraries, getCategories } from '@/data/librariesData'
 import api from '@/services/api'
-
-const STATIC_LIBS = getAllLibraries()
-const STATIC_CATS = getCategories()
 
 export default function LibrariesIndex() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [libraries, setLibraries] = useState(STATIC_LIBS)
+  const [libraries, setLibraries] = useState([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || '')
   const [difficulty, setDifficulty] = useState('')
 
-  // Try to enhance with backend data — but don't block on it
   useEffect(() => {
+    setLoading(true)
     const params = {}
     if (search) params.search = search
     if (activeCategory) params.category = activeCategory
     if (difficulty) params.difficulty = difficulty
     api.get('/libraries', { params })
-      .then(res => { if (Array.isArray(res.data) && res.data.length > 0) setLibraries(res.data) })
-      .catch(() => {}) // Silently fall back to static data
+      .then(res => {
+        const data = res.data?.data || (Array.isArray(res.data) ? res.data : [])
+        setLibraries(data)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   }, [search, activeCategory, difficulty])
 
   const filteredLibraries = useMemo(() => {
-    let libs = libraries.length ? libraries : STATIC_LIBS
+    let libs = libraries
     if (search) {
       const q = search.toLowerCase()
       libs = libs.filter(l =>

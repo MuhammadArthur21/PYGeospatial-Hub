@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ExternalLink, BookOpen, PlayCircle, Code, Tag, Layers, Copy, Check } from 'lucide-react'
 import { Card, CardHeader, CardTitle } from '@/components/Card'
-import { getLibraryById } from '@/data/librariesData'
+// API fetch only
 import api from '@/services/api'
 
 // Code templates for libraries
@@ -70,7 +70,7 @@ print(f"Distance Jakarta → Surabaya: {dist:.1f} km")`,
 
 export default function LibraryDetail() {
   const { id } = useParams()
-  const [lib, setLib] = useState(() => getLibraryById(id))
+  const [lib, setLib] = useState(null)
   const [copied, setCopied] = useState(false)
 
   const codeTemplate = CODE_TEMPLATES[id] || lib?.code_template || `# Example for ${lib?.name || id}\nimport ${id}\nprint("Library ${lib?.name || id} loaded!")`
