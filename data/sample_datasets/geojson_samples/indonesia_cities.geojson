@@ -1,0 +1,51 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Jakarta", "type": "city", "population": 10560000 },
+      "geometry": { "type": "Point", "coordinates": [106.8456, -6.2088] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Bandung", "type": "city", "population": 2500000 },
+      "geometry": { "type": "Point", "coordinates": [107.6186, -6.9175] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Surabaya", "type": "city", "population": 2900000 },
+      "geometry": { "type": "Point", "coordinates": [112.7508, -7.2575] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Yogyakarta", "type": "city", "population": 420000 },
+      "geometry": { "type": "Point", "coordinates": [110.3694, -7.7956] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Medan", "type": "city", "population": 2200000 },
+      "geometry": { "type": "Point", "coordinates": [98.6722, 3.5952] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Makassar", "type": "city", "population": 1400000 },
+      "geometry": { "type": "Point", "coordinates": [119.4328, -5.1472] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Java Island", "type": "region", "area_km2": 128297 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[105.1, -5.5], [114.6, -5.5], [114.6, -8.8], [105.1, -8.8], [105.1, -5.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Sumatra Island", "type": "region", "area_km2": 473481 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[95.3, 6.0], [106.1, 6.0], [106.1, -6.0], [95.3, -6.0], [95.3, 6.0]]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Jakarta Buffer 10km", "radius_km": 10 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[106.8456, -6.1088], [106.9556, -6.2088], [106.8456, -6.3088], [106.7356, -6.2088], [106.8456, -6.1088]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Bandung Buffer 5km", "radius_km": 5 },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[107.6186, -6.8675], [107.6686, -6.9175], [107.6186, -6.9675], [107.5686, -6.9175], [107.6186, -6.8675]]]
+      }
+    }
+  ]
+}

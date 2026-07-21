@@ -8,6 +8,7 @@ from app.api.v1.tools import router as tools_router
 from app.api.v1.sandbox import router as sandbox_router
 from app.api.v1.uploads import router as uploads_router
 from app.api.v1.visualizations import router as visualizations_router
+from app.api.v1.scripts import router as scripts_router
 
 api_router = APIRouter()
 
@@ -21,3 +22,4 @@ api_router.include_router(tools_router, prefix="/tools", tags=["Tools"])
 api_router.include_router(sandbox_router, prefix="/sandbox", tags=["Sandbox"])
 api_router.include_router(uploads_router, prefix="/uploads", tags=["Uploads"])
 api_router.include_router(visualizations_router, prefix="/visualizations", tags=["Visualizations"])
+api_router.include_router(scripts_router, prefix="/scripts", tags=["Scripts"])
