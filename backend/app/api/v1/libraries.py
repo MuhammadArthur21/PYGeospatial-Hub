@@ -1,57 +1,44 @@
 # PyGeospatial Hub - Libraries API
-# CRUD operations for geospatial libraries
+# CRUD operations with real data from registry
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
+from app.services.library_service import LibraryService
 
 router = APIRouter()
 
 
-class LibraryResponse(BaseModel):
-    id: int
-    name: str
-    category_id: int
-    description: str
-    documentation_url: str
-    pypi_url: str
-    difficulty_level: str
-    tags: List[str]
-    icon: Optional[str] = None
-
-
-class LibraryCreate(BaseModel):
-    name: str
-    category_id: int
-    description: str
-    documentation_url: str
-    pypi_url: str
-    difficulty_level: str
-    tags: List[str]
-
-
-@router.get("", response_model=List[LibraryResponse])
+@router.get("")
 async def list_libraries(
-    category: Optional[str] = Query(None, description="Filter by category"),
+    category: Optional[str] = Query(None, description="Filter by category ID"),
     difficulty: Optional[str] = Query(None, description="Filter by difficulty level"),
     search: Optional[str] = Query(None, description="Search by name or description"),
     page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
+    limit: int = Query(50, ge=1, le=100),
 ):
-    """List all libraries with optional filters"""
-    # TODO: Implement database query with filters
-    return []
+    """List all libraries with filters"""
+    libraries = LibraryService.search_libraries(
+        query=search or "",
+        category=category or "",
+        difficulty=difficulty or "",
+    )
+
+    # Paginate
+    start = (page - 1) * limit
+    end = start + limit
+
+    return {
+        "total": len(libraries),
+        "page": page,
+        "limit": limit,
+        "data": libraries[start:end],
+    }
 
 
-@router.get("/{library_id}", response_model=LibraryResponse)
-async def get_library(library_id: int):
+@router.get("/{library_id}")
+async def get_library(library_id: str):
     """Get detailed information about a specific library"""
-    # TODO: Implement library detail retrieval
-    raise HTTPException(status_code=404, detail="Library not found")
-
-
-@router.post("", response_model=LibraryResponse, status_code=201)
-async def create_library(library: LibraryCreate):
-    """Create a new library entry (admin only)"""
-    # TODO: Implement library creation
-    raise HTTPException(status_code=501, detail="Not implemented")
+    lib = LibraryService.get_library(library_id)
+    if not lib:
+        raise HTTPException(status_code=404, detail="Library not found")
+    return lib

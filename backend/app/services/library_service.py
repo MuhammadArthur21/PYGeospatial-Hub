@@ -5,7 +5,9 @@ import json
 import os
 from typing import List, Optional
 
-DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "data")
+# Project root: go up 4 levels from this file (/backend/app/services/ -> /)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 REGISTRY_PATH = os.path.join(DATA_DIR, "metadata", "libraries_registry.json")
 
 
@@ -16,7 +18,7 @@ class LibraryService:
     def load_registry() -> dict:
         """Load the library registry from JSON file"""
         if os.path.exists(REGISTRY_PATH):
-            with open(REGISTRY_PATH, "r") as f:
+            with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
                 return json.load(f)
         return {"categories": []}
 

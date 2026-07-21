@@ -1,30 +1,38 @@
 # PyGeospatial Hub - Categories API
-# CRUD operations for library categories
+# Returns real category data from registry
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional
+from app.services.library_service import LibraryService
 
 router = APIRouter()
 
 
-class CategoryResponse(BaseModel):
-    id: int
-    name: str
-    icon: Optional[str] = None
-    description: str
-    library_count: int = 0
-
-
-@router.get("", response_model=List[CategoryResponse])
+@router.get("")
 async def list_categories():
-    """List all library categories"""
-    # TODO: Implement category retrieval
-    return []
+    """List all library categories with library counts"""
+    categories = LibraryService.get_categories()
+    result = []
+    for cat in categories:
+        result.append({
+            "id": cat["id"],
+            "name": cat["name"],
+            "icon": cat.get("icon", ""),
+            "description": cat.get("description", ""),
+            "library_count": len(cat.get("libraries", [])),
+        })
+    return result
 
 
-@router.get("/{category_id}", response_model=CategoryResponse)
-async def get_category(category_id: int):
+@router.get("/{category_id}")
+async def get_category(category_id: str):
     """Get a specific category with its libraries"""
-    # TODO: Implement category detail
+    for cat in LibraryService.get_categories():
+        if cat["id"] == category_id:
+            return {
+                "id": cat["id"],
+                "name": cat["name"],
+                "icon": cat.get("icon", ""),
+                "description": cat.get("description", ""),
+                "libraries": cat.get("libraries", []),
+            }
     raise HTTPException(status_code=404, detail="Category not found")
