@@ -45,7 +45,6 @@ uploads/
 *.log
 
 # Project-specific
-setup_dirs.ps1
 
 # Sample data
 *.tif
@@ -53,3 +52,15 @@ setup_dirs.ps1
 *.las
 *.laz
 *.shp
+
+# Internal planning documents (do not push to public repo)
+PYGeospatial.md
+todo_list.md
+walkthrough.md
+implementation_plan.md
+setup_dirs.ps1
+
+# Runtime cache
+backend/cache/
+backend/.pytest_cache/
+*.pyc
