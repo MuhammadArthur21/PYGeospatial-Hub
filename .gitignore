@@ -46,3 +46,10 @@ uploads/
 
 # Project-specific
 setup_dirs.ps1
+
+# Sample data
+*.tif
+*.tiff
+*.las
+*.laz
+*.shp

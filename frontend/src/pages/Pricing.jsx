@@ -98,7 +98,7 @@ export default function Pricing() {
                   </div>
                 </div>
                 <Link
-                  to={tier.id === 'enterprise' ? '/contact' : '/dashboard'}
+                  to={tier.id === 'enterprise' ? '/pricing' : '/login'}
                   className={`w-full py-2.5 rounded-lg text-sm font-medium text-center transition-all flex items-center justify-center gap-2 ${
                     tier.popular
                       ? 'btn-primary'
@@ -117,7 +117,7 @@ export default function Pricing() {
       <div className="text-center mt-12">
         <p className="text-sm text-earth-500 dark:text-dark-accent/60">
           All plans include free access to Library Index, Tutorials, and Documentation.
-          <br />Need custom pricing? <a href="#" className="text-primary-600 dark:text-dark-accent hover:underline">Contact us</a>.
+          <br />Need custom pricing? <span className="text-primary-600 dark:text-dark-accent">Contact us via GitHub</span>.
         </p>
       </div>
     </div>

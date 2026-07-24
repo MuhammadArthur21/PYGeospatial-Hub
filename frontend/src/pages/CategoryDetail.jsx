@@ -1,31 +1,29 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, BookOpen } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
-
-const categoryInfo = {
-  core_geospatial: { name: 'Core Geospatial', icon: '📍', description: 'Fundamental geospatial data handling libraries for vector and raster operations.' },
-  remote_sensing: { name: 'Remote Sensing', icon: '🛰️', description: 'Satellite imagery processing, analysis, and raster data manipulation.' },
-  web_mapping: { name: 'Web Mapping', icon: '🗺️', description: 'Create interactive maps and web-based geospatial visualizations.' },
-  spatial_analysis: { name: 'Spatial Analysis', icon: '📐', description: 'Statistical analysis, spatial networks, and geographic modeling.' },
-}
-
-const sampleLibraries = [
-  { id: 'shapely', name: 'Shapely', category: 'core_geospatial', difficulty: 'beginner', desc: 'Geometric operations on planar features' },
-  { id: 'geopandas', name: 'GeoPandas', category: 'core_geospatial', difficulty: 'intermediate', desc: 'Extends pandas for geospatial data' },
-  { id: 'rasterio', name: 'Rasterio', category: 'core_geospatial', difficulty: 'intermediate', desc: 'Read and write raster data formats' },
-  { id: 'pyproj', name: 'Pyproj', category: 'core_geospatial', difficulty: 'beginner', desc: 'Coordinate transformations & projections' },
-  { id: 'folium', name: 'Folium', category: 'web_mapping', difficulty: 'beginner', desc: 'Interactive leaflet maps from Python' },
-  { id: 'osmnx', name: 'OSMnx', category: 'spatial_analysis', difficulty: 'advanced', desc: 'Download OpenStreetMap data' },
-]
+import { getCategories, getAllLibraries } from '@/data/librariesData'
 
 export default function CategoryDetail() {
   const { id } = useParams()
-  const cat = categoryInfo[id]
+  const [cat, setCat] = useState(null)
+  const [libs, setLibs] = useState([])
+
+  useEffect(() => {
+    const cats = getCategories()
+    const found = cats.find(c => c.id === id)
+    if (found) {
+      setCat(found)
+      const allLibs = getAllLibraries()
+      setLibs(allLibs.filter(l => l.category_id === id))
+    }
+  }, [id])
 
   if (!cat) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h2 className="text-2xl font-bold text-earth-900 dark:text-dark-text mb-4">Category Not Found</h2>
+        <p className="text-earth-500 dark:text-dark-accent/60 mb-6">Kategori dengan ID "{id}" tidak ditemukan.</p>
         <Link to="/categories" className="btn-primary inline-flex items-center gap-2">
           <ArrowLeft size={16} />
           Back to Categories
@@ -34,11 +32,9 @@ export default function CategoryDetail() {
     )
   }
 
-  const libs = sampleLibraries.filter((l) => l.category === id)
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <Link to="/categories" className="inline-flex items-center gap-2 text-earth-500 dark:text-dark-accent/70 hover:text-primary-600 dark:hover:text-dark-text mb-6 transition-colors">
+      <Link to="/categories" className="inline-flex items-center gap-2 text-earth-500 dark:text-dark-accent/70 hover:text-primary-600 dark:hover:text-dark-text mb-6 transition-colors text-sm">
         <ArrowLeft size={16} />
         All Categories
       </Link>
@@ -46,11 +42,11 @@ export default function CategoryDetail() {
       <div className="flex items-center gap-4 mb-8">
         <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-primary-300 
                       flex items-center justify-center text-2xl shadow-md">
-          {cat.icon}
+          {cat.icon || '📦'}
         </div>
         <div>
           <h1 className="text-3xl font-bold text-earth-900 dark:text-dark-text">{cat.name}</h1>
-          <p className="text-earth-500 dark:text-dark-accent/60">{cat.description}</p>
+          <p className="text-earth-500 dark:text-dark-accent/60">{cat.description} — {cat.count} libraries</p>
         </div>
       </div>
 
@@ -73,7 +69,7 @@ export default function CategoryDetail() {
                   </span>
                 </div>
               </CardHeader>
-              <CardDescription>{lib.desc}</CardDescription>
+              <CardDescription>{lib.description?.slice(0, 80)}{lib.description?.length > 80 ? '...' : ''}</CardDescription>
             </Card>
           </Link>
         ))}

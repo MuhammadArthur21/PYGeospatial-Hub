@@ -10,7 +10,7 @@ router = APIRouter()
 
 class CommentCreate(BaseModel):
     target_type: str  # 'script' or 'tool'
-    target_id: int  # Changed from str to int
+    target_id: str  # Script/tool identifier
     content: str
     author: Optional[str] = "Anonymous"
 
@@ -21,9 +21,18 @@ COMMENTS_DB = []
 @router.get("")
 async def list_comments(
     target_type: str = Query(...),
-    target_id: int = Query(...),
+    target_id: str = Query(...),
 ):
     """Get comments by target type and ID"""
+    return [
+        c for c in COMMENTS_DB
+        if c["target_type"] == target_type and c["target_id"] == target_id
+    ]
+
+
+@router.get("/{target_id}")
+async def get_comments_by_target(target_id: str, target_type: str = Query("script")):
+    """Get comments by target (path param convenience)"""
     return [
         c for c in COMMENTS_DB
         if c["target_type"] == target_type and c["target_id"] == target_id

@@ -7,9 +7,11 @@ This wrapper exposes common Shapely operations through a simplified interface.
 """
 
 from shapely.geometry import Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
-from shapely import wkt, wkb, geojson
+from shapely import wkt, wkb
+from shapely.geometry import mapping, shape
 from shapely.ops import unary_union, transform
 from typing import Union, List
+import json
 import pyproj
 
 GeometryType = Union[Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon]
@@ -57,12 +59,12 @@ def simplify_geometry(geom: GeometryType, tolerance: float) -> GeometryType:
 
 def to_geojson(geom: GeometryType) -> dict:
     """Convert a Shapely geometry to GeoJSON dict"""
-    return geojson.dumps(geom)
+    return json.dumps(mapping(geom))
 
 
 def from_geojson(geojson_str: str) -> GeometryType:
     """Create a Shapely geometry from a GeoJSON string"""
-    return geojson.loads(geojson_str)
+    return shape(json.loads(geojson_str))
 
 
 def reproject_geometry(

@@ -3,11 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { Search, BookOpen } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
 import api from '@/services/api'
+import { getAllLibraries, getCategories, searchLibraries } from '@/data/librariesData'
 
 export default function LibrariesIndex() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [libraries, setLibraries] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [apiOffline, setApiOffline] = useState(false)
   const [search, setSearch] = useState(searchParams.get('q') || '')
   const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || '')
   const [difficulty, setDifficulty] = useState('')
@@ -18,14 +21,34 @@ export default function LibrariesIndex() {
     if (search) params.search = search
     if (activeCategory) params.category = activeCategory
     if (difficulty) params.difficulty = difficulty
+
     api.get('/libraries', { params: { ...params, limit: 200 } })
       .then(res => {
         const data = res.data?.data || (Array.isArray(res.data) ? res.data : [])
         setLibraries(data)
+        setApiOffline(false)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch(() => {
+        // Backend offline — fall back to static data
+        setLibraries(searchLibraries({ query: search, category: activeCategory, difficulty }))
+        setApiOffline(true)
+        setLoading(false)
+      })
   }, [search, activeCategory, difficulty])
+
+  // Load categories (static always available as fallback)
+  useEffect(() => {
+    api.get('/categories')
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setCategories(res.data.map(c => ({ ...c, count: c.library_count ?? c.count ?? 0 })))
+        }
+      })
+      .catch(() => {
+        setCategories(getCategories())
+      })
+  }, [])
 
   const filteredLibraries = useMemo(() => {
     let libs = libraries
@@ -42,6 +65,9 @@ export default function LibrariesIndex() {
     return libs
   }, [libraries, search, activeCategory, difficulty])
 
+  // Use API categories if loaded, otherwise static
+  const displayCategories = categories.length > 0 ? categories : getCategories()
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -51,6 +77,11 @@ export default function LibrariesIndex() {
         <p className="text-earth-500 dark:text-dark-accent/60">
           Browse, search, and explore Python geospatial libraries
         </p>
+        {apiOffline && (
+          <p className="text-xs text-amber-500 mt-1">
+            ⚡ Backend offline — menampilkan data dari cache lokal ({getAllLibraries().length} library tersedia)
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -90,28 +121,18 @@ export default function LibrariesIndex() {
                 <BookOpen size={16} />
                 All Libraries
               </button>
-              {[
-  { id: 'core_geospatial', name: 'Core Geospatial', icon: '📍' },
-  { id: 'remote_sensing', name: 'Remote Sensing', icon: '🛰️' },
-  { id: 'web_mapping', name: 'Web Mapping', icon: '🗺️' },
-  { id: 'spatial_analysis', name: 'Spatial Analysis', icon: '📐' },
-  { id: 'visualization', name: 'Visualization', icon: '📊' },
-  { id: 'geocoding_routing', name: 'Geocoding & Routing', icon: '📍' },
-  { id: 'databases', name: 'Databases', icon: '🗄️' },
-  { id: 'point_cloud_lidar', name: 'Point Cloud & LiDAR', icon: '☁️' },
-  { id: 'machine_learning', name: 'Machine Learning', icon: '🤖' },
-  { id: 'utilities', name: 'Utilities', icon: '🔧' },
-].map((cat) => (
+              {displayCategories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   className={`sidebar-item w-full text-sm ${activeCategory === cat.id ? 'active' : ''}`}
                 >
-                  <span>{cat.icon}</span>
+                  <span>{cat.icon || '📦'}</span>
                   <span className="flex-1 text-left">{cat.name}</span>
-                  <span className="text-xs text-earth-400 dark:text-dark-accent/40">{cat.count}</span>
+                  <span className="text-xs text-earth-400 dark:text-dark-accent/40">{cat.count ?? 0}</span>
                 </button>
-              ))}</div>
+              ))}
+            </div>
           </div>
         </div>
 

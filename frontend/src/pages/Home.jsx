@@ -164,9 +164,9 @@ export default function Home() {
               © 2026 PyGeospatial Hub — Open Geospatial Platform
             </span>
             <div className="flex items-center gap-6 text-sm text-earth-500 dark:text-dark-accent/60">
-              <a href="#" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">Documentation</a>
-              <a href="#" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">API</a>
-              <a href="#" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">GitHub</a>
+              <Link to="/docs" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">Documentation</Link>
+              <Link to="/docs" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">API</Link>
+              <a href="https://github.com/your-org/pygeospatial-hub" target="_blank" rel="noopener noreferrer" className="hover:text-primary-600 dark:hover:text-dark-text transition-colors">GitHub</a>
             </div>
           </div>
         </div>

@@ -29,3 +29,27 @@ async def get_tier(tier_id: str):
     if tier_id not in TIERS:
         raise HTTPException(status_code=404, detail="Tier not found")
     return {"id": tier_id, **TIERS[tier_id]}
+
+
+# Current session usage tracking
+_SESSION_USAGE = {"executions_today": 0, "storage_used_mb": 0}
+
+
+@router.get("/usage")
+async def get_usage():
+    """Get current user's tier and usage info"""
+    return {
+        "tier": "free",
+        "tier_name": "Free",
+        "executions_per_day": TIERS["free"]["executions_per_day"],
+        "remaining_runs": TIERS["free"]["executions_per_day"] - _SESSION_USAGE["executions_today"],
+        "storage_mb": TIERS["free"]["storage_mb"],
+        "storage_used_mb": _SESSION_USAGE["storage_used_mb"],
+    }
+
+
+@router.post("/usage/increment")
+async def increment_usage():
+    """Increment execution count (for testing)"""
+    _SESSION_USAGE["executions_today"] += 1
+    return {"executions_today": _SESSION_USAGE["executions_today"]}

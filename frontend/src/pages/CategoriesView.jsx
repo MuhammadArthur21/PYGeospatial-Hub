@@ -1,20 +1,38 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, ChevronRight } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/Card'
+import { getCategories } from '@/data/librariesData'
 
-const categories = [
-  { id: 'core_geospatial', name: 'Core Geospatial', icon: '📍', description: 'Fundamental geospatial data handling', count: 6, color: 'from-primary-500 to-primary-300' },
-  { id: 'remote_sensing', name: 'Remote Sensing', icon: '🛰️', description: 'Satellite imagery and raster analysis', count: 5, color: 'from-sage-500 to-sage-300' },
-  { id: 'web_mapping', name: 'Web Mapping', icon: '🗺️', description: 'Interactive maps and web visualization', count: 4, color: 'from-primary-600 to-sage-400' },
-  { id: 'spatial_analysis', name: 'Spatial Analysis', icon: '📐', description: 'Statistical and network spatial analysis', count: 5, color: 'from-earth-600 to-earth-400' },
-  { id: 'visualization', name: 'Visualization', icon: '📊', description: 'Geospatial data visualization tools', count: 4, color: 'from-primary-400 to-sage-300' },
-  { id: 'geocoding_routing', name: 'Geocoding & Routing', icon: '📍', description: 'Address geocoding and route planning', count: 3, color: 'from-sage-400 to-sage-200' },
-  { id: 'databases', name: 'Databases', icon: '🗄️', description: 'Spatial databases and ORM', count: 3, color: 'from-earth-500 to-earth-300' },
-  { id: 'point_cloud_lidar', name: 'Point Cloud & LiDAR', icon: '☁️', description: '3D point cloud data processing', count: 2, color: 'from-primary-500 to-sage-400' },
-  { id: 'utilities', name: 'Utilities', icon: '🔧', description: 'Geospatial utility libraries', count: 4, color: 'from-earth-400 to-earth-200' },
+const CAT_COLORS = [
+  'from-primary-500 to-primary-300',
+  'from-sage-500 to-sage-300',
+  'from-primary-600 to-sage-400',
+  'from-earth-600 to-earth-400',
+  'from-primary-400 to-sage-300',
+  'from-sage-400 to-sage-200',
+  'from-earth-500 to-earth-300',
+  'from-primary-500 to-sage-400',
+  'from-purple-500 to-primary-300',
+  'from-earth-400 to-earth-200',
 ]
 
+const CAT_ICONS = ['📍','🛰️','🗺️','📐','📊','📍','🗄️','☁️','🤖','🔧']
+
 export default function CategoriesView() {
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+    const cats = getCategories()
+    setCategories(cats.map((c, i) => ({
+      ...c,
+      icon: c.icon || CAT_ICONS[i % CAT_ICONS.length],
+      color: CAT_COLORS[i % CAT_COLORS.length],
+    })))
+  }, [])
+
+  const totalLibs = categories.reduce((s, c) => s + c.count, 0)
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
@@ -22,7 +40,7 @@ export default function CategoriesView() {
           Library <span className="gradient-text">Categories</span>
         </h1>
         <p className="text-earth-500 dark:text-dark-accent/60">
-          Browse geospatial libraries by category
+          Browse geospatial libraries by category — {totalLibs} total libraries
         </p>
       </div>
 
@@ -33,7 +51,7 @@ export default function CategoriesView() {
               <CardHeader>
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} 
                               flex items-center justify-center text-xl shadow-md`}>
-                  {cat.icon}
+                  {cat.icon || '📦'}
                 </div>
                 <div className="flex-1">
                   <CardTitle>{cat.name}</CardTitle>

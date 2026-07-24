@@ -1,4 +1,5 @@
 # PyGeospatial Hub - Backend Dependencies
+
 # FastAPI Framework
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
@@ -18,21 +19,82 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.9
 authlib==1.3.2
 
-# Core Geospatial Libraries
+# Data Science Basics
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.14.1
+
+# Core Geospatial
 shapely==2.1.0
 geopandas==1.0.1
 rasterio==1.4.1
 pyproj==3.6.1
 gdal==3.8.2
-
-# Additional Geospatial
 fiona==1.9.6
+
+# Raster & Remote Sensing
+xarray==2024.1.1
+rioxarray==0.15.0
+netcdf4==1.6.5
+rasterstats==0.19.0
+satpy==0.51.0
+pystac==1.10.0
+
+# Web Mapping
 folium==0.18.0
-geojson==3.1.0
-plotly==5.24.1
+geemap==0.30.0
+leafmap==0.30.0
+
+# Visualization
 matplotlib==3.9.2
-contextily==1.6.0
+plotly==5.24.1
 cartopy==0.23.0
+contextily==1.6.0
+hvplot==0.10.0
+geoviews==1.12.0
+seaborn==0.13.2
+
+# Spatial Analysis
+pysal==24.2.0
+esda==2.5.1
+mapclassify==2.8.0
+pointpats==2.4.0
+momepy==0.7.0
+spaghetti==1.7.0
+osmnx==1.9.4
+networkx==3.3
+rtree==1.2.0
+
+# Geocoding & Routing
+geopy==2.4.1
+openrouteservice==2.3.2
+
+# Point Cloud & LiDAR
+laspy==2.5.4
+open3d==0.18.0
+pyvista==0.43.0
+
+# Machine Learning for Geo
+scikit-learn==1.5.2
+torchgeo==0.6.0
+sam-geo==0.1.0
+segment-geospatial==0.10.0
+
+# Movement & Trajectory
+movingpandas==0.18.0
+
+# Utilities
+geojson==3.1.0
+pygeodesy==24.9.7
+simplekml==1.3.6
+owslib==0.31.0
+haversine==2.8.0
+utm==0.7.0
+cftime==1.6.4
+regionmask==0.12.0
+salem==0.3.9
+timezonefinder==6.3.0
+geographiclib==2.0
 
 # Task Queue & Caching
 celery==5.4.0
@@ -48,3 +110,4 @@ httpx==0.27.2
 jsonschema==4.23.0
 python-magic==0.4.27
 aiofiles==24.1.0
+requests==2.32.0

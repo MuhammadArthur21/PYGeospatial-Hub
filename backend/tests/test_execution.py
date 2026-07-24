@@ -1,7 +1,7 @@
 # PyGeospatial Hub - Execution Tests
 # Tests for sandbox execution engine and code validation
 
-import pytest
+import pytest, docker
 from unittest.mock import patch, MagicMock
 
 
@@ -70,11 +70,11 @@ print(gdf.head())
 class TestSandboxExecutor:
     """Test the sandbox executor (with mocked Docker)"""
 
-    @patch('app.services.execution_service.docker')
-    def test_execute_success(self, mock_docker):
+    @patch.object(docker, 'from_env')
+    def test_execute_success(self, mock_from_env):
         """Test successful code execution"""
         from app.services.execution_service import SandboxExecutor
-
+    
         # Mock container
         mock_container = MagicMock()
         mock_container.wait.return_value = {"StatusCode": 0}
@@ -86,7 +86,7 @@ class TestSandboxExecutor:
         # Mock Docker client
         mock_client = MagicMock()
         mock_client.containers.run.return_value = mock_container
-        mock_docker.from_env.return_value = mock_client
+        mock_from_env.return_value = mock_client
 
         executor = SandboxExecutor()
         result = executor.execute("print('Hello World')")
@@ -94,8 +94,8 @@ class TestSandboxExecutor:
         assert result["status"] == "success"
         assert "Hello" in result["output"]
 
-    @patch('app.services.execution_service.docker')
-    def test_execute_timeout(self, mock_docker):
+    @patch.object(docker, 'from_env')
+    def test_execute_timeout(self, mock_from_env):
         """Test execution timeout handling"""
         from app.services.execution_service import SandboxExecutor
 
@@ -104,21 +104,21 @@ class TestSandboxExecutor:
 
         mock_client = MagicMock()
         mock_client.containers.run.return_value = mock_container
-        mock_docker.from_env.return_value = mock_client
+        mock_from_env.return_value = mock_client
 
         executor = SandboxExecutor()
         result = executor.execute("print('test')", timeout=1)
 
         assert result["status"] == "error"
 
-    @patch('app.services.execution_service.docker')
-    def test_sandbox_creation_failure(self, mock_docker):
+    @patch.object(docker, 'from_env')
+    def test_sandbox_creation_failure(self, mock_from_env):
         """Test handling of Docker failure"""
         from app.services.execution_service import SandboxExecutor
 
         mock_client = MagicMock()
         mock_client.containers.run.side_effect = Exception("Docker not available")
-        mock_docker.from_env.return_value = mock_client
+        mock_from_env.return_value = mock_client
 
         executor = SandboxExecutor()
         result = executor.execute("print('test')")

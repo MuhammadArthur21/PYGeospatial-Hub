@@ -60,7 +60,7 @@ export default function Community() {
                 <span className="text-sm font-semibold text-earth-700 dark:text-dark-text">{script.upvotes}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <Link to={`/script/${script.id}`} className="text-lg font-semibold text-earth-900 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent">
+                <Link to="/sandbox" className="text-lg font-semibold text-earth-900 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent">
                   {script.title}
                 </Link>
                 <p className="text-sm text-earth-500 dark:text-dark-accent/60 mt-1">{script.desc}</p>

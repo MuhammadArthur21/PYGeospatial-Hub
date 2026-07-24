@@ -13,7 +13,7 @@ def test_read_libraries_list():
     assert res_json["total"] > 0
 
 def test_read_comments_by_target():
-    response = client.get("/api/v1/comments/geopandas-buffer")
+    response = client.get("/api/v1/comments/geopandas-buffer?target_type=script")
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
@@ -25,8 +25,8 @@ def test_post_comment():
         "content": "UnitTest comment body",
         "author": "PyTest Agent"
     }
-    response = client.post("/api/v1/comments/", json=payload)
-    assert response.status_code == 200
+    response = client.post("/api/v1/comments", json=payload)
+    assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
     data = response.json()
     assert data["content"] == "UnitTest comment body"
     assert data["author"] == "PyTest Agent"

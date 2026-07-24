@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, ExternalLink, BookOpen, PlayCircle, Code, Tag, Layers, Copy, Check } from 'lucide-react'
 import { Card, CardHeader, CardTitle } from '@/components/Card'
-// API fetch only
 import api from '@/services/api'
+import { getLibraryById } from '@/data/librariesData'
 
 // Code templates for libraries
 const CODE_TEMPLATES = {
@@ -71,20 +71,45 @@ print(f"Distance Jakarta → Surabaya: {dist:.1f} km")`,
 export default function LibraryDetail() {
   const { id } = useParams()
   const [lib, setLib] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
 
   const codeTemplate = CODE_TEMPLATES[id] || lib?.code_template || `# Example for ${lib?.name || id}\nimport ${id}\nprint("Library ${lib?.name || id} loaded!")`
 
   useEffect(() => {
+    setLoading(true)
     api.get(`/libraries/${id}`)
-      .then(res => { if (res.data) setLib(res.data) })
-      .catch(() => {}) // Keep static fallback
+      .then(res => {
+        if (res.data) {
+          setLib(res.data)
+          setLoading(false)
+        }
+      })
+      .catch(() => {
+        // Backend offline — fall back to static data
+        const staticLib = getLibraryById(id)
+        if (staticLib) {
+          setLib(staticLib)
+        }
+        setLoading(false)
+      })
   }, [id])
 
   const copyCode = () => {
     navigator.clipboard.writeText(codeTemplate)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="animate-pulse">
+          <div className="h-8 w-48 bg-earth-200 dark:bg-dark-border rounded mx-auto mb-4" />
+          <div className="h-4 w-64 bg-earth-100 dark:bg-dark-border/50 rounded mx-auto" />
+        </div>
+      </div>
+    )
   }
 
   if (!lib) {

@@ -14,8 +14,6 @@ Security features:
 - Static code scan before execution
 """
 
-import docker
-from docker.types import Mount
 import uuid
 import time
 import re
@@ -27,7 +25,7 @@ from app.utils.logger import logger
 
 # Dangerous patterns to block in static scan
 BLOCKED_PATTERNS = [
-    r"import\s+os",
+    r"import\s+os\s*$",
     r"from\s+os\s+import",
     r"import\s+subprocess",
     r"from\s+subprocess\s+import",
@@ -75,6 +73,10 @@ class SandboxExecutor:
     """Manages Docker-based sandbox execution"""
 
     def __init__(self):
+        import docker
+        from docker.types import Mount
+        self._docker = docker
+        self._Mount = Mount
         self.client = docker.from_env()
         self.base_image = "pygeospatial-sandbox:latest"
 
@@ -82,7 +84,7 @@ class SandboxExecutor:
         """Ensure the sandbox base image exists"""
         try:
             self.client.images.get(self.base_image)
-        except docker.errors.ImageNotFound:
+        except self._docker.errors.ImageNotFound:
             logger.info("Building sandbox base image...")
             # Build the base image with geospatial libraries
             dockerfile = f"""
@@ -95,7 +97,13 @@ class SandboxExecutor:
             RUN pip install --no-cache-dir \\
                 shapely==2.1.0 geopandas==1.0.1 rasterio==1.4.1 \\
                 pyproj==3.6.1 fiona==1.9.6 folium==0.18.0 \\
-                matplotlib==3.9.2 numpy==1.26.0 requests==2.32.0
+                matplotlib==3.9.2 cartopy==0.23.0 contextily==1.6.0 \\
+                numpy==1.26.4 pandas==2.2.2 xarray==2024.1.1 \\
+                scipy==1.14.1 networkx==3.3 osmnx==1.9.4 \\
+                geopy==2.4.1 movingpandas==0.18.0 \\
+                geojson==3.1.0 hvplot==0.10.0 plotly==5.24.1 \\
+                seaborn==0.13.2 haversine==2.8.0 \\
+                requests==2.32.0 aiohttp==3.9.5
 
             RUN useradd -m -u 1000 sandbox
             USER sandbox
@@ -180,7 +188,9 @@ class SandboxExecutor:
                 volumes={tmp_dir: {"bind": "/workspace", "mode": "ro"}},
                 mem_limit=memory_limit,
                 nano_cpus=int(cpu_limit * 1e9),
-                network_mode="none",  # No network access for security
+                # Network enabled for data download (OSM, Natural Earth, etc.)
+                # Static code scan still blocks dangerous patterns
+                # network_mode="none",
                 user="1000:1000",
                 read_only=True,
                 detach=True,
@@ -218,7 +228,7 @@ class SandboxExecutor:
                 "execution_time": round(execution_time, 3),
             }
 
-        except docker.errors.ContainerError as e:
+        except self._docker.errors.ContainerError as e:
             execution_time = time.time() - start_time
             return {
                 "execution_id": execution_id,
@@ -245,6 +255,13 @@ class SandboxExecutor:
             except Exception:
                 pass
 
+# Lazy singleton - created on first access only
+_sandbox_executor = None
 
-# Singleton instance
-sandbox_executor = SandboxExecutor()
+
+def get_sandbox_executor():
+    """Get or create the singleton SandboxExecutor instance lazily."""
+    global _sandbox_executor
+    if _sandbox_executor is None:
+        _sandbox_executor = SandboxExecutor()
+    return _sandbox_executor

@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import {
   Play, RotateCcw, Save, Download, Share2, Upload, Terminal,
   Map, Bot, Loader, CheckCircle, XCircle, Clock, Copy, Check, Sparkles, BookOpen
@@ -10,6 +10,7 @@ import MapViewer from '@/components/MapViewer'
 import FileUploader from '@/components/FileUploader'
 import { executionService } from '@/services/executionService'
 import api from '@/services/api'
+import { getAllLibraries, getCategories } from '@/data/librariesData'
 
 // ── Templates ──────────────────────────────────────────────
 const templates = {
@@ -82,12 +83,24 @@ const AI_TIPS = {
 
 export default function Sandbox() {
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const libraryParam = searchParams.get('library') || 'default'
 
+  // initialCode dari navigate state (Tools, WorkflowBuilder, Tutorials)
+  const initialFromState = location.state?.initialCode
+
   const [code, setCode] = useState(() => {
+    if (initialFromState) return initialFromState
     const saved = localStorage.getItem(`sandbox_draft_${libraryParam}`)
     return saved || templates[libraryParam] || templates.default
   })
+
+  // Clear state agar tidak persist di re-render
+  useEffect(() => {
+    if (initialFromState) {
+      window.history.replaceState({}, document.title)
+    }
+  }, [])
   const [output, setOutput] = useState('')
   const [mapData, setMapData] = useState(null)
   const [isRunning, setIsRunning] = useState(false)
@@ -117,16 +130,13 @@ export default function Sandbox() {
     setAiTip(AI_TIPS[lib] || AI_TIPS.default)
   }, [selectedLibs])
 
-  const libraryOptions = [
-    { id: 'shapely', name: 'Shapely' },
-    { id: 'geopandas', name: 'GeoPandas' },
-    { id: 'rasterio', name: 'Rasterio' },
-    { id: 'pyproj', name: 'Pyproj' },
-    { id: 'fiona', name: 'Fiona' },
-    { id: 'folium', name: 'Folium' },
-    { id: 'matplotlib', name: 'Matplotlib' },
-    { id: 'numpy', name: 'NumPy' },
-  ]
+  const [libSearch, setLibSearch] = useState('')
+  const allLibs = useMemo(() => {
+    const raw = getAllLibraries()
+    if (!libSearch) return raw
+    const q = libSearch.toLowerCase()
+    return raw.filter(l => l.name.toLowerCase().includes(q) || l.id.toLowerCase().includes(q) || (l.tags || []).some(t => t.toLowerCase().includes(q)))
+  }, [libSearch])
 
   const toggleLibrary = (libId) => {
     setSelectedLibs(prev => prev.includes(libId) ? prev.filter(id => id !== libId) : [...prev, libId])
@@ -248,22 +258,27 @@ export default function Sandbox() {
   return (
     <div className="h-[calc(100vh-4rem)] flex overflow-hidden">
       {/* ── Left Sidebar ── */}
-      <div className="hidden lg:flex lg:w-56 flex-col border-r border-earth-200 dark:border-dark-border bg-white/50 dark:bg-dark-surface/50">
-        <div className="p-3 border-b border-earth-200 dark:border-dark-border">
-          <h3 className="text-xs font-semibold text-earth-600 dark:text-dark-accent uppercase tracking-wider">Libraries</h3>
-        </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
-          {libraryOptions.map(lib => {
-            const isActive = selectedLibs.includes(lib.id)
-            return (
-              <button key={lib.id} onClick={() => toggleLibrary(lib.id)}
-                className={`sidebar-item w-full text-sm ${isActive ? 'active' : ''}`}>
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isActive ? 'bg-primary-500 dark:bg-dark-accent' : 'bg-earth-300 dark:bg-dark-border'}`} />
-                {lib.name}
-              </button>
-            )
-          })}
-        </div>
+        <div className="hidden lg:flex lg:w-56 flex-col border-r border-earth-200 dark:border-dark-border bg-white/50 dark:bg-dark-surface/50">
+          <div className="p-3 border-b border-earth-200 dark:border-dark-border">
+            <h3 className="text-xs font-semibold text-earth-600 dark:text-dark-accent uppercase tracking-wider">Libraries</h3>
+            <div className="relative mt-1">
+              <input type="text" placeholder="Cari library..." value={libSearch} onChange={e => setLibSearch(e.target.value)}
+                className="w-full text-[11px] px-2 py-1 rounded bg-earth-100 dark:bg-dark-border border-0 text-earth-700 dark:text-dark-text placeholder-earth-400 outline-none focus:ring-1 focus:ring-primary-500" />
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto p-2 space-y-0.5">
+            <p className="text-[10px] text-earth-400 dark:text-dark-accent/40 px-1 pb-1">{allLibs.length} library {libSearch ? `(filter: "${libSearch}")` : ''}</p>
+            {allLibs.map(lib => {
+              const isActive = selectedLibs.includes(lib.id)
+              return (
+                <button key={lib.id} onClick={() => toggleLibrary(lib.id)}
+                  className={`sidebar-item w-full text-sm ${isActive ? 'active' : ''}`}>
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isActive ? 'bg-primary-500 dark:bg-dark-accent' : 'bg-earth-300 dark:bg-dark-border'}`} />
+                  <span className="truncate">{lib.name}</span>
+                </button>
+              )
+            })}
+          </div>
 
         <div className="p-2 border-t border-earth-200 dark:border-dark-border space-y-1">
           <button onClick={() => setShowUploader(v => !v)}
